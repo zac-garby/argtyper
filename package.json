@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Zac-Garby/argtyper/issues"
   },
-  "homepage": "https://github.com/Zac-Garby/argtyper#readme"
+  "homepage": "https://github.com/Zac-Garby/argtyper#readme",
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  }
 }
