@@ -1,0 +1,11 @@
+{
+  "name": "typed",
+  "version": "1.0.0",
+  "description": "JavaScript argument-type-checking without preprocessing!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zac Garby <zacgarby@icloud.com>",
+  "license": "MIT"
+}
