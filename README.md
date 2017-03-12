@@ -12,6 +12,27 @@ Because of the way it works, it's only _possible_ at the moment to do it for arg
 sadly not variable declarations. But, that's not a huge problem because most of the bugs
 actually come from wrongly typed arguments.
 
+## Installation
+
+If you're using npm, you can just run this command to install [ArgTyper](https://www.npmjs.com/package/argtyper):
+
+```
+$ npm install --save argtyper
+```
+
+And to import the _save_ function into a file, use the following:
+
+```javascript
+var type = require('argtyper');
+```
+
+You can then just call _type_ on functions, as documented in the example below.
+
+### Without npm
+
+If you don't have npm, you can download _index.js_ and load it from your _index.html_,
+or you could simply copy the _type_ function from it into your project.
+
 ## Example
 
 Here is a basic program using ArgTyper. In it, a simple function, called `add`, is defined,
