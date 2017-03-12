@@ -1,4 +1,4 @@
-function type(fn) {
+module.exports = function type(fn) {
   const argString = fn.toString().match(/\((.+)\)/)[1];
   let args = argString.match(/[^=]+=([^,]+)/g);
 
@@ -42,8 +42,3 @@ function type(fn) {
     return fn(...arguments);
   };
 }
-
-module.exports = {
-  type,
-  typeAll
-};
