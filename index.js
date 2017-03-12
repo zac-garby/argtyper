@@ -13,7 +13,7 @@ module.exports = function type(fn) {
       .slice(1, arg[1].length - 1)
       .match(/[^, ]+/g)
       .map((type) => {
-        return window[type]
+        return eval(type)
       });
 
     return {
