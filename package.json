@@ -1,6 +1,6 @@
 {
   "name": "argtyper",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A JavaScript argument type-checker without preprocessing!",
   "main": "index.js",
   "scripts": {
