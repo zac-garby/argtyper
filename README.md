@@ -36,11 +36,12 @@ or you could simply copy the _type_ function from it into your project.
 ## Example
 
 Here is a basic program using ArgTyper. In it, a simple function, called `add`, is defined,
-with two arguments, called _a_ and _b_. Both of them are _Number_ types (the type goes
-after the argument name, separated by an equals sign).
+with two arguments, called _a_ and _b_. Both of them can be either a String or a
+Number - the allowed types are written in an array following an equal, after the
+name of the argument.
 
 ```javascript
-function add(a=Number, b=Number) {
+function add(a=[String, Number], b=[String, Number]) {
   return a + b;
 }
 
@@ -56,42 +57,60 @@ arguments.
 ```javascript
 // Test cases
 
-add(5, 3)     //=> 8
-add(5, true)  //=> Error
-add(6, 1, 8)  //=> Error
-add(7)        //=> Error
+add(5, 3)                //=> 8
+add('Hello, ', 'world!') //=> "Hello, world!"
+add('num: ', 10)         //=> "num: 10"
+add(5, true)             //=> Type Error
+add(6, 1, 8)             //=> Length Error
+add(7)                   //=> Length Error
 ```
+
+It also works with arrow functions, which can be useful to make typed functions
+a little faster to write. The function above can be rewritten as the following:
+
+```javascript
+var add = type((a=[String, Number], b=[String, Number]) => {
+  return a + b;
+});
+```
+
+Although the line is a bit longer, it saves having to add type checking to it
+on a separate line (yes, I know you can do that with normal functions, but
+it looks a bit strange.) However, the arrow function way looks, as usual,
+more complicated.
 
 ## How it works
 
-The entirety of ArgTyper is, at the time of writing, roughly 50 lines long. This shows how
+The entirety of ArgTyper is, at the time of writing, only 17 semicolons long. This shows how
 simple it actually is.
 
-It's completely based off the concept of default values of function arguments, as you've
+It's based off the concept of default values of function arguments, as you've
 probably noticed. Instead of the default values being used as default values, they are
 reparsed and changed to signify the allowed type for the argument. Obviously, this will
 mean that, on any functions you are type checking, you won't be able to have default values.
 
 So what the _type_ function actually does is as follows:
 
- 1. Firstly, it finds a string containing the arguments of the given function, using the
-    regex `/\((.+\)/`. The string could look something like this: `a=Number, b=Number`.
+ 1. Firstly, using a regex, a string containing the arguments to the function is located.
 
- 2. Next, the arguments are split into an array using the regex `/[^=]+=([^,]+)/g`.
-    The array will contain some elements, looking something like these: `a=Number` and `, b=Number`.
+ 2. Next, that string is split up, so each argument is its own element in an array
 
  3. That array is mapped, and for each element in it, a number of things happen.
     1. For any element other than the first, the comma and space is removed from the front.
-    2. The argument name and type are extracted using the regex `/([^=]+)=(.+)/`.
+    2. The argument name and allowed types are extracted, again using a regex.
     3. The argument is replaced with an object containing the name and type.
 
  4. A new function is then returned which performs type checks and arg length checks, before
-    finally executing the given function.
+    finally executing the given function if those checks were successful.
 
 ## In the future
 
 In the future, I'd like to add some new features:
 
  - Subclass support
- - Support for more than one type per argument
+ - Support for untyped arguments
+ - Do something for default values not wrapped in an array. Either:
+  - Leave it as a default value, so typed functions _can_ have default arguments, or...
+  - Wrap it in an array and use it as a type as usual.
  - More errors / more descriptive errors
+ - Add testing
