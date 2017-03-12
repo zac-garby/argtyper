@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function type(fn) {
   const argString = fn.toString().match(/\((.+)\)/)[1];
   let args = argString.match(/[^=]+=([^,]+)/g);
