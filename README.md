@@ -1,4 +1,4 @@
-# Typed
+# ArgTyper
 
 ### A JavaScript argument-type-checker, without the need for preprocessing or compiling.
 
@@ -7,14 +7,14 @@ However, to actually use type checking normally, you'd install a library such as
 which is great, but you have to compile your program. This not only takes time, but is
 annoying to set up.
 
-Typed, (working title), is a better way to implement type checking for function arguments.
+ArgTypeR, (working title), is a better way to implement type checking for function arguments.
 Because of the way it works, it's only _possible_ at the moment to do it for arguments -
 sadly not variable declarations. But, that's not a huge problem because most of the bugs
 actually come from wrongly typed arguments.
 
 ## Example
 
-Here is a basic program using Typed. In it, a simple function, called `add`, is defined,
+Here is a basic program using ArgTyper. In it, a simple function, called `add`, is defined,
 with two arguments, called _a_ and _b_. Both of them are _Number_ types (the type goes
 after the argument name, separated by an equals sign).
 
@@ -43,7 +43,7 @@ add(7)        //=> Error
 
 ## How it works
 
-The entirety of Typed is, at the time of writing, roughly 50 lines long. This shows how
+The entirety of ArgTyper is, at the time of writing, roughly 50 lines long. This shows how
 simple it actually is.
 
 It's completely based off the concept of default values of function arguments, as you've
@@ -55,18 +55,18 @@ So what the _type_ function actually does is as follows:
 
  1. Firstly, it finds a string containing the arguments of the given function, using the
     regex `/\((.+\)/`. The string could look something like this: `a=Number, b=Number`.
-    
+
  2. Next, the arguments are split into an array using the regex `/[^=]+=([^,]+)/g`.
     The array will contain some elements, looking something like these: `a=Number` and `, b=Number`.
-    
+
  3. That array is mapped, and for each element in it, a number of things happen.
     1. For any element other than the first, the comma and space is removed from the front.
     2. The argument name and type are extracted using the regex `/([^=]+)=(.+)/`.
     3. The argument is replaced with an object containing the name and type.
-    
+
  4. A new function is then returned which performs type checks and arg length checks, before
     finally executing the given function.
-    
+
 ## In the future
 
 In the future, I'd like to add some new features:
