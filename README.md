@@ -102,15 +102,3 @@ So what the _type_ function actually does is as follows:
 
  4. A new function is then returned which performs type checks and arg length checks, before
     finally executing the given function if those checks were successful.
-
-## In the future
-
-In the future, I'd like to add some new features:
-
- - Subclass support
- - Support for untyped arguments
- - Do something for default values not wrapped in an array. Either:
-  - Leave it as a default value, so typed functions _can_ have default arguments, or...
-  - Wrap it in an array and use it as a type as usual.
- - More errors / more descriptive errors
- - Add testing
