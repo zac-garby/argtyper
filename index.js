@@ -1,20 +1,44 @@
 'use strict';
 
-module.exports = function type(fn) {
-  const argString = fn.toString().match(/\((.+)\)/)[1]; // Get arguments
-  let args = argString.match(/[^=]+=(\[[^[]+\])/g);     // Split arguments
+module.exports = function type(fn, types) {
+  const argString = fn.toString().match(/\((.*)\)/)[1]; // Get arguments
 
-  args = args.map((arg) => {
-  	arg = arg
-      .replace(/^,\s+/, '')  // Remove commas
-      .match(/([^=]+)/g);    // Extract name and type
+  if (argString.length === 0) return fn;
 
-    const types = arg[1]
-      .slice(1, arg[1].length - 1)
-      .match(/[^, ]+/g)
-      .map((type) => {
-        return eval(type)
-      });
+  let args = argString.match(/[^,]+|[^=]+=(\[[^[]+\])/g); // Split arguments
+
+  args = args.map((arg, index) => {
+  	arg = arg.replace(/^,\s+/, '') // Remove commas
+
+    if (arg.match(/[^=]+/)[0] === arg) {
+      return {
+        name: arg,
+        types: [null]
+      }
+    }
+
+    arg = arg.match(/([^=]+)/g); // Extract name and type
+
+    const types = eval(arg[1]);
+    const constructor = types.constructor;
+
+    if (constructor === Array) {
+      return {
+        name: arg[0],
+        types: types
+      };
+    } else if (constructor === Function) {
+      if (new constructor().constructor === constructor) { // Is a constructor?
+        return {
+          name: arg[0],
+          types: [types]
+        };
+      } else {
+        throw new Error(
+          `The type must be a constructor (arg ${index + 1})`
+        );
+      }
+    }
 
     return {
       name: arg[0],
@@ -39,7 +63,10 @@ module.exports = function type(fn) {
         let allowed = false;
 
         for (let allowedType of allowedTypes) {
-          if (arg.constructor === allowedType) {
+          if (allowedType === null
+              || arg instanceof allowedType
+              || arg.constructor === allowedType) {
+
             allowed = true;
           }
         }
