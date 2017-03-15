@@ -28,15 +28,9 @@ module.exports = function type(fn, types) {
         types: types
       };
     } else if (constructor === Function) {
-      if (new constructor().constructor === constructor) { // Is a constructor?
-        return {
-          name: arg[0],
-          types: [types]
-        };
-      } else {
-        throw new Error(
-          `The type must be a constructor (arg ${index + 1})`
-        );
+      return {
+        name: arg[0],
+        types: [types]
       }
     }
 
