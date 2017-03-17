@@ -20,7 +20,7 @@ If you're using npm, you can just run this command to install [ArgTyper](https:/
 $ npm install --save argtyper
 ```
 
-And to import the _save_ function into a file, use the following:
+And to import the _type_ function into a file, use the following:
 
 ```javascript
 var type = require('argtyper');
