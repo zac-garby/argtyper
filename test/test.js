@@ -29,6 +29,16 @@ describe('argtyper', function() {
     }).to.not.throw(Error).and.to.equal(10);
   });
 
+  it('should allow multiple types', () => {
+    function addMultiple(a=[String, Number], b=[String, Number]) {
+      return a + b;
+    }
+
+    expect(function() {
+      addMultiple(5, 'a');
+    }).to.not.throw(Error).and.to.equal('5a');
+  });
+
   it('should disallow arguments of the wrong type', () => {
     expect(function() {
       add(5, 'a');
@@ -89,5 +99,20 @@ describe('argtyper', function() {
     expect(function() {
       mixedAdd(3, 5);
     }).to.not.throw(Error).and.to.equal(8);
-  })
+  });
+
+  it('should automatically convert to string if needed', () => {
+    function concatenate(a=String, b=String) {
+      expect(a).to.be.a('string');
+      expect(b).to.be.a('string');
+
+      return a + b;
+    }
+
+    concatenate = type(concatenate);
+
+    expect(function() {
+      concatenate(5, 3);
+    }).to.not.throw(Error).and.to.equal('53');
+  });
 });
