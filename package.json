@@ -1,6 +1,6 @@
 {
   "name": "argtyper",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "JS type-checker - no compilation!",
   "main": "index.js",
   "scripts": {
