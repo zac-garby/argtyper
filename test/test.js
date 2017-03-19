@@ -3,7 +3,6 @@ var expect = chai.expect;
 
 var type = require('../index').type;
 var typeAll = require('../index').typeAll;
-var typeClass = require('../index').typeClass;
 
 // Define a test function
 function add(a=[Number], b=[Number]) {
@@ -122,7 +121,7 @@ describe('argtyper', function() {
 
   describe('typeAll()', function() {
     it('should work when an object only contains functions', () => {
-      let obj = {
+      const obj = {
         add: function(x=Number, y=Number) {
           return x + y;
         },
@@ -144,7 +143,7 @@ describe('argtyper', function() {
     });
 
     it('should work on a mix of functions and other values', () => {
-      let obj = {
+      const obj = {
         add: function(x=Number, y=Number) {
           return x + y;
         },

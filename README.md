@@ -23,7 +23,7 @@ $ npm install --save argtyper
 And to import the _type_ function into a file, use the following:
 
 ```javascript
-var type = require('argtyper');
+var type = require('argtyper').type;
 ```
 
 You can then just call _type_ on functions, as documented in the example below.
@@ -78,6 +78,36 @@ Although the line is a bit longer, it saves having to add type checking to it
 on a separate line (yes, I know you can do that with normal functions, but
 it looks a bit strange.) However, the arrow function way looks, as usual,
 more complicated.
+
+### Typing objects
+
+ArgTyper also has a function to type all functions in an object, called
+`typeAll()`. It takes one argument: _object_, which is the object to type.
+
+To import it, use the following:
+
+```javascript
+var typeAll = require('argtyper').typeAll;
+```
+
+And here's how to use it:
+
+```javascript
+const maths = {
+  add = function (a=Number, b=Number) {
+    return a + b;
+  },
+  mul = function (a=Number, b=Number) {
+    return a * b
+  }
+};
+
+typeAll(maths); // Note you don't have to assign it back to the object
+
+maths.add(5, 5)    //=> 10
+maths.mul(5, 5)    //=> 25
+maths.add('2', 10) //=> Type Error
+```
 
 ## How it works
 
