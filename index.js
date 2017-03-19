@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function type(fn, types) {
+exports.type = function (fn) {
   const argString = fn.toString().match(/\((.*)\)/)[1]; // Get arguments
 
   if (argString.length === 0) return fn; // If there are no arguments, just
@@ -87,4 +87,12 @@ module.exports = function type(fn, types) {
 
     return fn(...arguments); // If the arguments are okay, call the function
   };
+}
+
+exports.typeAll = function (object) {
+  for (var prop in object) {
+    if (object.hasOwnProperty(prop) && typeof object[prop] === 'function') {
+      object[prop] = exports.type(object[prop]);
+    }
+  }
 }
