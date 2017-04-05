@@ -1,20 +1,20 @@
-# ArgTyper
+# argtyper
 
-### A JavaScript argument-type-checker, without the need for preprocessing or compiling.
+### JS Type-Constraints without compilation.
 
 Type checking is very useful in JavaScript - it helps catch a number of different bugs.
 However, to actually use type checking normally, you'd install a library such as Flow,
 which is great, but you have to compile your program. This not only takes time, but is
 annoying to set up.
 
-ArgTyper, (working title), is a better way to implement type checking for function arguments.
+argtyper, is a better way to implement type checking for function arguments.
 Because of the way it works, it's only _possible_ at the moment to do it for arguments -
 sadly not variable declarations. But, that's not a huge problem because most of the bugs
 actually come from wrongly typed arguments.
 
 ## Installation
 
-If you're using npm, you can just run this command to install [ArgTyper](https://www.npmjs.com/package/argtyper):
+If you're using npm, you can just run this command to install [argtyper](https://www.npmjs.com/package/argtyper):
 
 ```
 $ npm install --save argtyper
@@ -23,29 +23,24 @@ $ npm install --save argtyper
 And to import the _type_ function into a file, use the following:
 
 ```javascript
-var type = require('argtyper').type;
+var type = require('argtyper').type
 ```
 
 You can then just call _type_ on functions, as documented in the example below.
 
-### Without npm
-
-If you don't have npm, you can download _index.js_ and load it from your _index.html_,
-or you could simply copy the _type_ function from it into your project.
-
 ## Example
 
-Here is a basic program using ArgTyper. In it, a simple function, called `add`, is defined,
-with two arguments, called _a_ and _b_. Both of them can be either a String or a
-Number - the allowed types are written in an array following an equal, after the
+Here is a basic program using argtyper. In it, a simple function, called `add`,
+is defined, with two arguments, called _a_ and _b_. Both of them are _Number_'s
+: the allowed type is written following an equals, after the
 name of the argument.
 
 ```javascript
-function add(a=[String, Number], b=[String, Number]) {
-  return a + b;
+function add(a=Number, b=Number) {
+  return a + b
 }
 
-add = type(add);
+add = type(add)
 ```
 
 The last line is very important. The _type_ function wraps a given function in some type
@@ -58,36 +53,29 @@ arguments.
 // Test cases
 
 add(5, 3)                //=> 8
-add('Hello, ', 'world!') //=> "Hello, world!"
-add('num: ', 10)         //=> "num: 10"
-add(5, true)             //=> Type Error
-add(6, 1, 8)             //=> Length Error
-add(7)                   //=> Length Error
+add(5, true)             //=> Error
+add(6, 1, 8)             //=> Error
+add(7)                   //=> Error
 ```
 
 It also works with arrow functions, which can be useful to make typed functions
 a little faster to write. The function above can be rewritten as the following:
 
 ```javascript
-var add = type((a=[String, Number], b=[String, Number]) => {
+var add = type((a=Number, b=Number) => {
   return a + b;
 });
 ```
 
-Although the line is a bit longer, it saves having to add type checking to it
-on a separate line (yes, I know you can do that with normal functions, but
-it looks a bit strange.) However, the arrow function way looks, as usual,
-more complicated.
-
 ### Typing objects
 
-ArgTyper also has a function to type all functions in an object, called
+argtyper also has a function to type all functions in an object, called
 `typeAll()`. It takes one argument: _object_, which is the object to type.
 
 To import it, use the following:
 
 ```javascript
-var typeAll = require('argtyper').typeAll;
+var typeAll = require('argtyper').typeAll
 ```
 
 And here's how to use it:
@@ -102,33 +90,48 @@ const maths = {
   }
 };
 
-typeAll(maths); // Note you don't have to assign it back to the object
+typeAll(maths) // Note you don't have to assign it back to the object
 
 maths.add(5, 5)    //=> 10
 maths.mul(5, 5)    //=> 25
-maths.add('2', 10) //=> Type Error
+maths.add('2', 10) //=> Error
 ```
 
-## How it works
+As kind of demonstrated in that example, the `typeAll` function can be very
+useful if you want to type a _module_, if that module is defined as properties
+of an object.
 
-The entirety of ArgTyper is, at the time of writing, only 17 semicolons long. This shows how
-simple it actually is.
+## Documentation
 
-It's based off the concept of default values of function arguments, as you've
-probably noticed. Instead of the default values being used as default values, they are
-reparsed and changed to signify the allowed type for the argument. Obviously, this will
-mean that, on any functions you are type checking, you won't be able to have default values.
+### Types of constraints
 
-So what the _type_ function actually does is as follows:
+There are many different types of constraints in argtyper. Here's a list!
 
- 1. Firstly, using a regex, a string containing the arguments to the function is located.
+ - `ClassName` - The simplest constraint, which you've already seen in the earlier
+   examples, is just a single class name, such as _Number_ or _String_.
+    - Don't use _Array_ or _Object_ as a class name, as they are to be written
+      using their own syntax (described below.)
+    - Also don't use _Any_, because it's it's own separate thing.
+    - Example: `Number` allows a number
 
- 2. Next, that string is split up, so each argument is its own element in an array
+ - `[Constraint, Constraint ...]` - When having an array as an argument to a function, you specify
+   the types for each element of that array. The syntax is very similar to
+   defining a normal array, except each element of the constraining array should
+   be another constraint (i.e. a class name, another array, etc...)
+    - Example: `[Number, String, [Number, Number, Number]]` allows an array
+      where the first element is a number, the second a string, and the third
+      another array containing three numbers.
 
- 3. That array is mapped, and for each element in it, a number of things happen.
-    1. For any element other than the first, the comma and space is removed from the front.
-    2. The argument name and allowed types are extracted, again using a regex.
-    3. The argument is replaced with an object containing the name and type.
+ - `{x: Constraint, y: Constraint ...}` - You can add an object constraint in a
+   similar fashion to an array. Again, you use the exact same syntax as writing
+   an object, just each property's value should be another constraint.
+    - Example: `{x: Number, y: Number}` allows a two-dimensional vector in the
+      form of an object with an x and y field, both numbers.
 
- 4. A new function is then returned which performs type checks and arg length checks, before
-    finally executing the given function if those checks were successful.
+ - `Any(Constraint, Constraint ...)` - It's also possible for an argument to
+   accept multiple types, using the _Any()_ syntax. It's fairly simple - here's
+   an example:
+    - Example: `Any(Number, String)` allows either a number or a string
+
+ - `Any` - The word _Any_ on its own just allows anything through. It's how
+   you can make an untyped argument in argtyper.

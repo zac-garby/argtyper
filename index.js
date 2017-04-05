@@ -1,92 +1,150 @@
-'use strict';
+const esprima = require('esprima')
+const mapValues = require('object.map')
+
+class Any {
+  constructor (types) {
+    this.types = types
+  }
+
+  toString () {
+    return this.types.reduce((acc, val, index) => {
+      return acc + (index === 0 ? '' : ' | ') + typeToString(val)
+    }, '<') + '>'
+  }
+
+  isValid (arg) {
+    for (let type of this.types) {
+      try {
+        checkArgument(type, arg, [], true)
+        return true
+      } catch (e) {}
+    }
+
+    return false
+  }
+}
+
+function err(type, text, stacktrace=null) {
+  if (stacktrace) {
+    let str = `(${type}) ${text}`
+    for (const item of stacktrace.reverse()) {
+      str += `\n    of ${item}`
+    }
+
+    throw new Error(str + '\n    ---')
+  }
+  throw new Error(`(${type}) ${text}`)
+}
+
+function typeToString (type) {
+  if (type.constructor === Array) {
+    return type.reduce((acc, val, index) => {
+      return acc + (index === 0 ? '' : ', ') + typeToString(val)
+    }, '[') + ']'
+  } else if (type.constructor === Object) {
+    type = mapValues(type, (val) => {
+      return typeToString(val)
+    })
+
+    return JSON.stringify(type)
+  } else if (type.constructor === Function) {
+    return type.name
+  } else if (type.constructor === Any) {
+    return type.toString()
+  } else {
+    return typeToString(type.constructor)
+  }
+}
+
+// Takes part of an AST and returns an actual JavaScript value representing it
+function getType (expr) {
+  const type = expr.type
+
+  if (type === 'Identifier') {
+    if (expr.name === 'Any') {
+      return null
+    }
+    return eval(expr.name)
+  } else if (type === 'ArrayExpression') {
+    return expr.elements.map((elem) => {
+      return getType(elem)
+    })
+  } else if (type === 'ObjectExpression') {
+    const obj = {}
+    for (let elem of expr.properties) {
+      obj[elem.key.name] = getType(elem.value)
+    }
+    return obj
+  } else if (type === 'CallExpression') {
+    if (expr.callee.name === 'Any') {
+      const types = expr.arguments.map(getType)
+      return new Any(types)
+    } else {
+      err('Type', `Invalid function call in type`)
+    }
+  } else {
+    err('Type', `Invalid constraint '${typeToString(type)}'. Expected a Function, Array, or Object`)
+  }
+}
+
+function checkArguments (types, args) {
+  if (args.length !== types.length) {
+    err('Argument', `Wrong number of arguments! Expected ${types.length}, and found ${args.length}`)
+  }
+
+  for (let i = 0; i < args.length; i++) {
+    let stacktrace = [`argument ${i + 1}`]
+    checkArgument(types[i], args[i], stacktrace)
+  }
+}
+
+function checkArgument (type, arg, stacktrace) {
+  if (!type) return
+
+  const argType = arg.constructor
+
+  function typeError() {
+    err('Type', `Invalid type ${typeToString(arg)}. Expected ${typeToString(type)}`, stacktrace)
+  }
+
+  if (type.constructor === Any) {
+    if (!type.isValid(arg)) {
+      typeError()
+    }
+  } else if (argType === Array) {
+    if (type.constructor !== Array) {
+      typeError()
+    }
+
+    arg.map((elem, i) => {
+      checkArgument(type[i], elem, [...stacktrace, `element ${i + 1}`])
+      return elem
+    })
+  } else if (argType === Object) {
+    if (type.constructor !== Object) {
+      typeError()
+    }
+
+    mapValues(arg, (value, key) => {
+      checkArgument(type[key], value, [...stacktrace, `item ${key}`])
+    })
+  } else if (argType !== type) {
+    typeError()
+  }
+}
 
 exports.type = function (fn) {
-  const argString = fn.toString().match(/\((.*)\)/)[1]; // Get arguments
+  const argsAST = esprima.parse(`(${fn.toString()})`).body[0].expression.params
 
-  if (argString.length === 0) return fn; // If there are no arguments, just
-                                         // return the original function.
+  const types = argsAST.map((arg) => {
+    return getType(arg.right)
+  })
 
-  let args = argString.match(/[^,]+|[^=]+=(\[[^[]+\])/g); // Split arguments
+  return function (...args) {
+    checkArguments(types, args)
 
-  args = args.map((arg, index) => {
-  	arg = arg.replace(/^,\s+/, '') // Remove commas
-
-    if (arg.match(/[^=]+/)[0] === arg) { // If the argument is untyped
-      return { // Return an object with an no types
-        name: arg,
-        types: [null]
-      }
-    }
-
-    arg = arg.match(/([^=]+)/g); // Extract name and type
-
-    const types = eval(arg[1]); // Evaluate type to get a constructor or array
-                                // of constructors
-
-    const constructor = types.constructor;
-
-    if (constructor === Array) { // If there are multiple types
-      return { // Return those types
-        name: arg[0],
-        types: types
-      };
-    } else if (constructor === Function) { // Otherwise, it is probably a constructor
-      return { // In which case, return an array containing that constructor
-        name: arg[0],
-        types: [types]
-      }
-    }
-
-    return {
-      name: arg[0],
-      types: types
-    }
-  });
-
-  // Return a new function. This function performs type checking and if the
-  // checks were successful, calls the base function and returns that.
-  return function() {
-    if (arguments.length !== args.length) { // If there are the wrong amount of arguments
-      throw new Error( // Return an error
-        `Wrong number of arguments: Expecting ${args.length} and found ${arguments.length}.`
-      );
-    }
-
-    for (let i = 0; i < arguments.length; i++) { // Loop the arguments
-    	const arg = arguments[i], // Get the current argument
-      	type = arg.constructor, // Find its type
-        requiredArg = args[i]; // Check what would be allowed
-
-      if (args[i]) { // If the argument is typed
-        const allowedTypes = args[i].types; // Get an array of the allowed types
-        let allowed = false; // Initialise as false. Will be set to true if any
-                             // input arguments are the correct type
-
-        for (let allowedType of allowedTypes) { // Loop the allowed types
-          if (allowedType === null // If the type of the argument is okay
-              || arg instanceof allowedType
-              || arg.constructor === allowedType) {
-
-            allowed = true; // The argument is allowed
-          }
-        }
-
-        if (!allowed) { // If the type was wrong
-          if (allowedTypes.indexOf(String) > -1) { // Cast to a string if it will help
-            arguments[i] = arguments[i].toString()
-          } else { // Otherwise, throw a type error
-            throw new Error(
-              `Invalid type (arg ${i + 1}): Expecting one of [${allowedTypes.map((type, index) => {
-                return (index === 0 ? '' : ' ') + type.name;
-              })}] and found ${type.name}.`
-            );
-          }
-        }
-      }
-    }
-
-    return fn(...arguments); // If the arguments are okay, call the function
-  };
+    return fn(...args)
+  }
 }
 
 exports.typeAll = function (object) {
