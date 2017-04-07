@@ -1,2 +1,3 @@
  ∙ Functionality for arrays of any length - repeated constraints
  ∙ Type aliases, for example: Vector -> {x: Number, y: Number}
+ ∙ Constraints in classes: constructors, getters, setters, and methods
