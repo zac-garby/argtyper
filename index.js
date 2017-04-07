@@ -191,5 +191,3 @@ exports.typedef = function (fn) {
 }
 
 exports.getDefinedAliases = () => { return aliases }
-
-// exports.typedef((x=Number, y=Number) => { Vector })
