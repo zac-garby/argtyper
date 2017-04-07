@@ -25,6 +25,12 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
+  it('should disallow arguments without explicit types', () => {
+    expect(() => {
+      type((a, b) => { return a + b })
+    }).to.throw(Error)
+  })
+
   it('should disallow too few arguments', () => {
     expect(() => {
       add(5)

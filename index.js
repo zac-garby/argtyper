@@ -157,9 +157,12 @@ function checkArgument (type, arg, stacktrace) {
 }
 
 exports.type = function (fn) {
-  const argsAST = esprima.parse(`(${fn.toString()})`).body[0].expression.params
+  const exp = esprima.parse(`(${fn.toString()})`).body[0].expression,
+    argsAST = exp.params
 
   const types = argsAST.map((arg) => {
+    assert(arg.type === 'AssignmentPattern', 'Expected a default value to be used as the type for all arguments.')
+    
     return getType(arg.right)
   })
 
