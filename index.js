@@ -203,11 +203,3 @@ exports.typedef = function (fn) {
 }
 
 exports.getDefinedAliases = () => { return aliases }
-
-/*
-exports.typedef((x=Number, y=Number) => Vector)
-
-let mul = exports.type((a=Vector, b=Number) => { return { x: a.x * b, y: a.y * b } })
-
-mul({x: 5, y: 3}, 2)
-*/
