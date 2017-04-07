@@ -4,7 +4,7 @@
   "description": "JS type-checker - no compilation!",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -w"
   },
   "repository": {
     "type": "git",
