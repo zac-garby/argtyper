@@ -3,6 +3,8 @@
 const esprima = require('esprima')
 const mapValues = require('object.map')
 
+const aliases = []
+
 class Any {
   constructor (types) {
     this.types = types
@@ -63,10 +65,19 @@ function getType (expr) {
   const type = expr.type
 
   if (type === 'Identifier') {
-    if (expr.name === 'Any') {
+    const name = expr.name
+
+    if (name === 'Any') {
       return null
     }
-    return eval(expr.name)
+
+    for (let alias of aliases) {
+      if (alias.name === name) {
+        return alias
+      }
+    }
+
+    return eval(name)
   } else if (type === 'ArrayExpression') {
     return expr.elements.map((elem) => {
       return getType(elem)
@@ -156,3 +167,29 @@ exports.typeAll = function (object) {
     }
   }
 }
+
+exports.typedef = function (fn) {
+  const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
+
+  if (exp.body.body.length !== 1) {
+    throw new Error('Expecting exactly one identifier to define an alias as!')
+  }
+
+  const alias = {
+    name: exp.body.body[0].expression.name,
+    type: {}
+  }
+
+  for (let arg of exp.params) {
+    if (arg.type !== 'AssignmentPattern') {
+      throw new Error('Expecting an assignment for each argument. e.g. "x=Number" instead of just "x"')
+    }
+    alias.type[arg.left.name] = getType(arg.right)
+  }
+
+  aliases.push(alias)
+}
+
+exports.getDefinedAliases = () => { return aliases }
+
+// exports.typedef((x=Number, y=Number) => { Vector })

@@ -1,3 +1,7 @@
  ∙ Functionality for arrays of any length - repeated constraints
  ∙ Type aliases, for example: Vector -> {x: Number, y: Number}
  ∙ Constraints in classes: constructors, getters, setters, and methods
+ ∙ Don't break when no default value is given
+ ∙ Functionality to type function arguments. Type for the arguments and arguments
+   ∙ e.g. 'function (f=((x=Number, y=Number) => { x * y }))', when typed, would take
+     a function fitting the definition
