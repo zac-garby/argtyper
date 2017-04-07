@@ -1,3 +1,5 @@
+'use strict'
+
 const esprima = require('esprima')
 const mapValues = require('object.map')
 
