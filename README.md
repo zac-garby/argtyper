@@ -159,24 +159,56 @@ var typedef = require('argtyper').typedef
 This is a very useful little function. Here's an example of its use:
 
 ```javascript
-typedef((x=Number, y=Number) => Vector)
+typedef(Vector => ({x: Number, y: Number}))
 
 function addThreeVectors (a=Vector, b=Vector, c=Vector) {
 	...
 }
 ```
 
-Much nicer! And also exactly 100% identical to the previous function, as the aliases are expanded upon parsing.
+Much nicer! And also exactly 100% identical to the previous function, as the aliases are automatically expanded upon parsing.
 
-`typedef`'s syntax is quite experimental at the moment, and is _very_ *__very__* likely to change in the near future, to something along the lines of:
+Now, not only can you make an alias for an object (like the example above) but you can actually make an alias for any of the following types:
+
+ - Objects
+ - Arrays
+ - Actually, anything you can write as a constraint normally
+ - Even other aliases
+
+Here are some (completely trivial) examples using a some alias types mentioned above:
 
 ```javascript
-typedef(Vector => {x: Number, y: Number})
+typedef(ThreeNumbers => [Number, Number, Number])
+typedef(AddOperand => Any(Number, String))
+typedef(ThreeAddOperands => [AddOperand, AddOperand, AddOperand])
+
+function sumThree (a=ThreeNumbers) {
+	return a[0] + a[1] + a[2]
+}
+
+function add (a=AddOperand, b=AddOperand) {
+	return a + b
+}
+
+function addThree (ops=ThreeAddOperands) {
+	return ops[0] + ops[1] + ops[2]
+}
 ```
 
-To allow for non-object aliases:
+(I didn't call type on the functions defined. In real life, you'd need to, but to make it more readable I didn't in this example. I also probably won't in other examples)
+
+#### Aliases to shorten type names
+
+Here's another really useful use of aliases:
 
 ```javascript
-typedef(MyArray => [Number, Number, Object])
-typedef(Num => Number)
+typedef(N => Number)
+```
+
+As I mentioned earlier, aliases can be defined as _any_ valid constraint. Therefore, you can also use them to just shorten class names:
+
+```javascript
+function add (a=N, b=N) {
+	return a + b
+}
 ```

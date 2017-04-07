@@ -93,8 +93,8 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
-  it('should work with aliases', () => {
-    typedef((x=Number, y=Number) => Vector)
+  it('should work with object aliases', () => {
+    typedef(Vector => ({x: Number, y: Number}))
 
     const mul = type((a=Vector, b=Number) => {
       return { x: a.x * b, y: a.y * b }
@@ -105,24 +105,39 @@ describe('argtyper', function() {
     }).to.not.throw(Error).and.to.equal({ x: 10, y: 6 })
 
     expect(() => {
-      return mul({x: 3, y: ';-)'}, 3)
+      mul({x: 3, y: ';-)'}, 3)
     }).to.throw(Error)
   })
 
-  it('aliases should work inside other aliases', () => {
-    typedef((x=Number, y=Number) => Vector)
-    typedef((a=Vector, b=Vector) => TwoVectors)
+  it('should work with array aliases', () => {
+    typedef(SetOfThree => [Number, Number, Number])
 
-    const add = type((x=TwoVectors) => {
-      return { x: x.a.x + x.b.x, y: x.a.y + x.b.y }
+    const sumOfThree = type((x=SetOfThree) => {
+      return x[0] + x[1] + x[2]
     })
 
     expect(() => {
-      return add({a: {x: 1, y: 2}, b: {x: 3, y: 4}})
-    }).to.not.throw(Error).and.to.equal({ x: 4, y: 6 })
+      return sumOfThree([3, 2, 1])
+    }).to.not.throw(Error).and.to.equal(6)
 
     expect(() => {
-      return add({a: 's', b: {x: 3, y: 4}})
+      sumOfThree([3, 2, 'one'])
+    }).to.throw(Error)
+  })
+
+  it('should work with single-type aliases', () => {
+    typedef(Num => Number)
+
+    const add = type((a=Num, b=Num) => {
+      return a + b
+    })
+
+    expect(() => {
+      return add(5, 3)
+    }).to.not.throw(Error).and.to.equal(8)
+
+    expect(() => {
+      return add(5, 'three')
     }).to.throw(Error)
   })
 

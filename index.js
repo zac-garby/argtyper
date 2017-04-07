@@ -28,6 +28,16 @@ class Any {
   }
 }
 
+function assert (truth, message) {
+  if (!truth) {
+    throw new Error(message)
+  }
+
+  return {
+    and: assert
+  }
+}
+
 function err(type, text, stacktrace=null) {
   if (stacktrace) {
     let str = `(${type}) ${text}`
@@ -73,7 +83,7 @@ function getType (expr) {
 
     for (let alias of aliases) {
       if (alias.name === name) {
-        return expandAlias(alias)
+        return alias.type
       }
     }
 
@@ -98,18 +108,6 @@ function getType (expr) {
   } else {
     err('Type', `Invalid constraint '${typeToString(type)}'. Expected a Function, Array, or Object`)
   }
-}
-
-function expandAlias (type) {
-  const obj = {}
-
-  for (var prop in type.type) {
-    if (type.type.hasOwnProperty(prop)) {
-      obj[prop] = type.type[prop]
-    }
-  }
-
-  return obj
 }
 
 function checkArguments (types, args) {
@@ -183,20 +181,13 @@ exports.typeAll = function (object) {
 exports.typedef = function (fn) {
   const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
 
-  if (exp.body.type !== 'Identifier') {
-    throw new Error('Expecting an identifier for the alias')
-  }
+  assert(exp.type === 'ArrowFunctionExpression', 'Expected an arrow function as the only argument to typedef')
+    .and(exp.params.length === 1, 'Expected only one argument to the arrow function')
+    .and(exp.params[0].type === 'Identifier', 'Expected an identifier as the alias name')
 
   const alias = {
-    name: exp.body.name,
-    type: {}
-  }
-
-  for (let arg of exp.params) {
-    if (arg.type !== 'AssignmentPattern') {
-      throw new Error('Expecting an assignment for each argument. e.g. "x=Number" instead of just "x"')
-    }
-    alias.type[arg.left.name] = getType(arg.right)
+    name: exp.params[0].name,
+    type: getType(exp.body)
   }
 
   aliases.push(alias)

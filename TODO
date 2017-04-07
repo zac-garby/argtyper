@@ -4,9 +4,3 @@
  ∙ Functionality to type function arguments. Type for the arguments and arguments
    ∙ e.g. 'function (f=((x=Number, y=Number) => {}))', when typed, would take
      a function fitting the definition
- ∙ Change alias syntax to something like the following example:
-
-      typedef(Vector => {x: Number, y: Number})
-
-   Which, I just found out, is syntactically valid!
-   This syntax would allow for aliasing arrays as well as objects.
