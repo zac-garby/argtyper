@@ -7,14 +7,14 @@ However, to actually use type checking normally, you'd install a library such as
 which is great, but you have to compile your program. This not only takes time, but is
 annoying to set up.
 
-argtyper, is a better way to implement type checking for function arguments.
+_argtyper_, is a better way to implement type checking for function arguments.
 Because of the way it works, it's only _possible_ at the moment to do it for arguments -
 sadly not variable declarations. But, that's not a huge problem because most of the bugs
 actually come from wrongly typed arguments.
 
 ## Installation
 
-If you're using npm, you can just run this command to install [argtyper](https://www.npmjs.com/package/argtyper):
+If you're using npm, you can just run this command to install [_argtyper_](https://www.npmjs.com/package/argtyper):
 
 ```
 $ npm install --save argtyper
@@ -30,7 +30,7 @@ You can then just call _type_ on functions, as documented in the example below.
 
 ## Example
 
-Here is a basic program using argtyper. In it, a simple function, called `add`,
+Here is a basic program using _argtyper_. In it, a simple function, called `add`,
 is defined, with two arguments, called _a_ and _b_. Both of them are _Number_'s
 : the allowed type is written following an equals, after the
 name of the argument.
@@ -69,7 +69,7 @@ var add = type((a=Number, b=Number) => {
 
 ### Typing objects
 
-argtyper also has a function to type all functions in an object, called
+_argtyper_ also has a function to type all functions in an object, called
 `typeAll()`. It takes one argument: _object_, which is the object to type.
 
 To import it, use the following:
@@ -105,7 +105,7 @@ of an object.
 
 ### Types of constraints
 
-There are many different types of constraints in argtyper. Here's a list!
+There are many different types of constraints in _argtyper_. Here's a list!
 
  - `ClassName` - The simplest constraint, which you've already seen in the earlier
    examples, is just a single class name, such as _Number_ or _String_.
@@ -134,4 +134,49 @@ There are many different types of constraints in argtyper. Here's a list!
     - Example: `Any(Number, String)` allows either a number or a string
 
  - `Any` - The word _Any_ on its own just allows anything through. It's how
-   you can make an untyped argument in argtyper.
+   you can make an untyped argument in _argtyper_.
+
+### Aliases
+
+Say you're writing a game. You'd probably use a lot of Vectors. In _argtyper_, you might represent a vector similar to the following:
+
+```javascript
+function addThreeVectors (
+	a={x: Number, y: Number},
+	b={x: Number, y: Number},
+	c={x: Number, y: Number}
+) {
+	...
+}
+```
+
+But as you can see, it just takes too long to write. And imagine if you repeatedly used an object which has, say, 10 properties. It'd just take too long. There must be a better way, right? Well, there is. You can use the `typedef` function, exported from _argtyper_:
+
+```javascript
+var typedef = require('argtyper').typedef
+```
+
+This is a very useful little function. Here's an example of its use:
+
+```javascript
+typedef((x=Number, y=Number) => Vector)
+
+function addThreeVectors (a=Vector, b=Vector, c=Vector) {
+	...
+}
+```
+
+Much nicer! And also exactly 100% identical to the previous function, as the aliases are expanded upon parsing.
+
+`typedef`'s syntax is quite experimental at the moment, and is _very_ *__very__* likely to change in the near future, to something along the lines of:
+
+```javascript
+typedef(Vector => {x: Number, y: Number})
+```
+
+To allow for non-object aliases:
+
+```javascript
+typedef(MyArray => [Number, Number, Object])
+typedef(Num => Number)
+```
