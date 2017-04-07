@@ -73,7 +73,7 @@ function getType (expr) {
 
     for (let alias of aliases) {
       if (alias.name === name) {
-        return alias
+        return expandAlias(alias)
       }
     }
 
@@ -98,6 +98,18 @@ function getType (expr) {
   } else {
     err('Type', `Invalid constraint '${typeToString(type)}'. Expected a Function, Array, or Object`)
   }
+}
+
+function expandAlias (type) {
+  const obj = {}
+
+  for (var prop in type.type) {
+    if (type.type.hasOwnProperty(prop)) {
+      obj[prop] = type.type[prop]
+    }
+  }
+
+  return obj
 }
 
 function checkArguments (types, args) {
@@ -171,12 +183,12 @@ exports.typeAll = function (object) {
 exports.typedef = function (fn) {
   const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
 
-  if (exp.body.body.length !== 1) {
-    throw new Error('Expecting exactly one identifier to define an alias as!')
+  if (exp.body.type !== 'Identifier') {
+    throw new Error('Expecting an identifier for the alias')
   }
 
   const alias = {
-    name: exp.body.body[0].expression.name,
+    name: exp.body.name,
     type: {}
   }
 
@@ -191,3 +203,11 @@ exports.typedef = function (fn) {
 }
 
 exports.getDefinedAliases = () => { return aliases }
+
+/*
+exports.typedef((x=Number, y=Number) => Vector)
+
+let mul = exports.type((a=Vector, b=Number) => { return { x: a.x * b, y: a.y * b } })
+
+mul({x: 5, y: 3}, 2)
+*/
