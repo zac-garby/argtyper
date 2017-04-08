@@ -28,9 +28,9 @@ class Any {
   }
 }
 
-function assert (truth, message) {
+function assert (truth, type, message) {
   if (!truth) {
-    throw new Error(message)
+    err(type, message)
   }
 
   return {
@@ -161,8 +161,8 @@ exports.type = function (fn) {
     argsAST = exp.params
 
   const types = argsAST.map((arg) => {
-    assert(arg.type === 'AssignmentPattern', 'Expected a default value to be used as the type for all arguments.')
-    
+    assert(arg.type === 'AssignmentPattern', 'Parse', 'Expected a default value to be used as the type for all arguments.')
+
     return getType(arg.right)
   })
 
@@ -184,9 +184,9 @@ exports.typeAll = function (object) {
 exports.typedef = function (fn) {
   const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
 
-  assert(exp.type === 'ArrowFunctionExpression', 'Expected an arrow function as the only argument to typedef')
-    .and(exp.params.length === 1, 'Expected only one argument to the arrow function')
-    .and(exp.params[0].type === 'Identifier', 'Expected an identifier as the alias name')
+  assert(exp.type === 'ArrowFunctionExpression', 'Parse', 'Expected an arrow function as the only argument to typedef')
+    .and(exp.params.length === 1, 'Parse', 'Expected only one argument to the arrow function')
+    .and(exp.params[0].type === 'Identifier', 'Parse', 'Expected an identifier as the alias name')
 
   const alias = {
     name: exp.params[0].name,
