@@ -147,6 +147,24 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
+  it('should allow \'Repeat\' to create a list of length n', () => {
+    const sumTen = type((a=Repeat(Number, 10)) => {
+      return a.reduce((a, b) => a + b, 0)
+    })
+
+    expect(() => {
+      return sumTen([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    }).to.not.throw(Error).and.to.equal(10)
+
+    expect(() => {
+      return sumTen([1, 2, 3])
+    }).to.throw(Error)
+
+    expect(() => {
+      return sumTen([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+    }).to.throw(Error)
+  })
+
   it('typeAll should work on an object only containing functions', () => {
     const obj = {
       add: function(x=Number, y=Number) {

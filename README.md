@@ -224,3 +224,38 @@ function add (a=N, b=N) {
   return a + b
 }
 ```
+
+### Repetition
+
+Sometimes, you want an array with lots of elements in it. Here's an example:
+
+```javascript
+function sumOneHundred (a=[Number, Number, Number ... Number]) {
+  ...
+}
+```
+
+(I omitted 96 `Number`s, but you can imagine how long it'd be if I wrote them all out)
+
+There's a better way to do this, of course. You can use the `Repeat` function:
+
+```javascript
+function sumOneHundred (a=Repeat(Number, 100)) {
+  ...
+}
+```
+
+As you can see, this looks a lot better.
+
+In the future, I'm planning on supporting infinite repetition, but as of now
+you have to give two arguments - the type and the amount.
+
+Anyway, to pass the one hundred arguments to this function, you'd do the following:
+
+```javascript
+sumOneHundred([7, 2, 3, 10, 4, ...])
+```
+
+But obviously just a whole lot more elements in the array.
+
+This works because calling `Repeat` as a constraint just expands to the array.

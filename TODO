@@ -1,4 +1,3 @@
- ∙ Functionality for arrays of any length - repeated constraints
  ∙ Constraints in classes: constructors, getters, setters, and methods
  ∙ Functionality to type function arguments. Type for the arguments and arguments
    ∙ e.g. 'function (f=((x=Number, y=Number) => {}))', when typed, would take

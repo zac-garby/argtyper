@@ -100,13 +100,32 @@ function getType (expr) {
     return obj
   } else if (type === 'CallExpression') {
     if (expr.callee.name === 'Any') {
+      assert(expr.arguments.length >= 1, 'Parse', 'Expected at least one argument to \'Any\'')
       const types = expr.arguments.map(getType)
+
       return new Any(types)
+    } else if (expr.callee.name === 'Repeat') {
+      const args = expr.arguments
+
+      assert(args.length === 2, 'Parse', 'Expected one or two arguments to \'Repeat\'')
+      const type = getType(args[0])
+
+      assert(args[1].type === 'Literal', 'Parse', 'Expected an integer literal as the second argument to \'Repeat\'')
+        .and(Number.isInteger(args[1].value), 'Parse', 'Expected an integer literal as the second argument to \'Repeat\'')
+      const amount = args[1].value
+
+      const arr = []
+
+      for (let i = 0; i < amount; i++) {
+        arr.push(type)
+      }
+
+      return arr
     } else {
       err('Type', `Invalid function call in type`)
     }
   } else {
-    err('Type', `Invalid constraint '${typeToString(type)}'. Expected a Function, Array, or Object`)
+    err('Type', `Invalid constraint '${typeToString(type)}'`)
   }
 }
 
@@ -136,6 +155,10 @@ function checkArgument (type, arg, stacktrace) {
     }
   } else if (argType === Array) {
     if (type.constructor !== Array) {
+      typeError()
+    }
+
+    if (type.length !== arg.length) {
       typeError()
     }
 
