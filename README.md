@@ -14,7 +14,8 @@ actually come from wrongly typed arguments.
 
 ## Installation
 
-If you're using npm, you can just run this command to install [_argtyper_](https://www.npmjs.com/package/argtyper):
+If you're using npm, you can just run this command to install
+[_argtyper_](https://www.npmjs.com/package/argtyper):
 
 ```
 $ npm install --save argtyper
@@ -114,10 +115,11 @@ There are many different types of constraints in _argtyper_. Here's a list!
     - Also don't use _Any_, because it's it's own separate thing.
     - Example: `Number` allows a number
 
- - `[Constraint, Constraint ...]` - When having an array as an argument to a function, you specify
-   the types for each element of that array. The syntax is very similar to
-   defining a normal array, except each element of the constraining array should
-   be another constraint (i.e. a class name, another array, etc...)
+ - `[Constraint, Constraint ...]` - When having an array as an argument to a
+   function, you specify the types for each element of that array. The syntax is
+   very similar to defining a normal array, except each element of the
+   constraining array should be another constraint (i.e. a class name,
+   another array, etc...)
     - Example: `[Number, String, [Number, Number, Number]]` allows an array
       where the first element is a number, the second a string, and the third
       another array containing three numbers.
@@ -138,19 +140,23 @@ There are many different types of constraints in _argtyper_. Here's a list!
 
 ### Aliases
 
-Say you're writing a game. You'd probably use a lot of Vectors. In _argtyper_, you might represent a vector similar to the following:
+Say you're writing a game. You'd probably use a lot of Vectors. In _argtyper_,
+you might represent a vector similar to the following:
 
 ```javascript
 function addThreeVectors (
-	a={x: Number, y: Number},
-	b={x: Number, y: Number},
-	c={x: Number, y: Number}
+  a={x: Number, y: Number},
+  b={x: Number, y: Number},
+  c={x: Number, y: Number}
 ) {
-	...
+  ...
 }
 ```
 
-But as you can see, it just takes too long to write. And imagine if you repeatedly used an object which has, say, 10 properties. It'd just take too long. There must be a better way, right? Well, there is. You can use the `typedef` function, exported from _argtyper_:
+But as you can see, it just takes too long to write. And imagine if you repeatedly
+used an object which has, say, 10 properties. It'd just take too long. There must
+be a better way, right? Well, there is. You can use the `typedef` function,
+exported from _argtyper_:
 
 ```javascript
 var typedef = require('argtyper').typedef
@@ -162,20 +168,23 @@ This is a very useful little function. Here's an example of its use:
 typedef(Vector => ({x: Number, y: Number}))
 
 function addThreeVectors (a=Vector, b=Vector, c=Vector) {
-	...
+  ...
 }
 ```
 
-Much nicer! And also exactly 100% identical to the previous function, as the aliases are automatically expanded upon parsing.
+Much nicer! And also exactly 100% identical to the previous function, as the
+aliases are automatically expanded upon parsing.
 
-Now, not only can you make an alias for an object (like the example above) but you can actually make an alias for any of the following types:
+Now, not only can you make an alias for an object (like the example above) but
+you can actually make an alias for any of the following types:
 
  - Objects
  - Arrays
  - Actually, anything you can write as a constraint normally
  - Even other aliases
 
-Here are some (completely trivial) examples using a some alias types mentioned above:
+Here are some (completely trivial) examples using a some alias types mentioned
+above:
 
 ```javascript
 typedef(ThreeNumbers => [Number, Number, Number])
@@ -183,19 +192,21 @@ typedef(AddOperand => Any(Number, String))
 typedef(ThreeAddOperands => [AddOperand, AddOperand, AddOperand])
 
 function sumThree (a=ThreeNumbers) {
-	return a[0] + a[1] + a[2]
+  return a[0] + a[1] + a[2]
 }
 
 function add (a=AddOperand, b=AddOperand) {
-	return a + b
+  return a + b
 }
 
 function addThree (ops=ThreeAddOperands) {
-	return ops[0] + ops[1] + ops[2]
+  return ops[0] + ops[1] + ops[2]
 }
 ```
 
-(I didn't call type on the functions defined. In real life, you'd need to, but to make it more readable I didn't in this example. I also probably won't in other examples)
+(I didn't call type on the functions defined. In real life, you'd need to, but
+to make it more readable I didn't in this example. I also probably won't in
+other examples)
 
 #### Aliases to shorten type names
 
@@ -205,10 +216,11 @@ Here's another really useful use of aliases:
 typedef(N => Number)
 ```
 
-As I mentioned earlier, aliases can be defined as _any_ valid constraint. Therefore, you can also use them to just shorten class names:
+As I mentioned earlier, aliases can be defined as _any_ valid constraint.
+Therefore, you can also use them to just shorten class names:
 
 ```javascript
 function add (a=N, b=N) {
-	return a + b
+  return a + b
 }
 ```
