@@ -1,6 +1,6 @@
-const assert = require('../helpers').assert
+const assert = require('../errors').assert
 
-exports.ArrayType = class {
+exports.ArrayType = class ArrayType {
   constructor (...elements) {
     this.elements = elements
     this.name = 'array'
@@ -16,7 +16,7 @@ exports.ArrayType = class {
     const that = args[0]
 
     assert(args.length > 0, 'Type', `Expected at least one more argument to match ${this}`)
-      .and(that.constructor === this.constructor, 'Type', `Wrong type. Expected an array, but found ${that.name}`)
+      .and(that.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${that.name}`)
 
     let elems = that.elements,
       types = this.elements

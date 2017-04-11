@@ -2,7 +2,7 @@
   "name": "argtyper",
   "version": "2.2.0",
   "description": "JS type-checker - no compilation!",
-  "main": "index.js",
+  "main": "js/index.js",
   "scripts": {
     "test": "mocha -w"
   },
