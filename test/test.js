@@ -43,8 +43,8 @@ describe('argtyper', function () {
     }).to.throw(Error)
   })
 
-  it('should work with \'Any(constraint, ...)\' to allow polymorphic constraints', () => {
-    const fn = type(function (a = Any(Number, String)) {})
+  it('should work with \'|\' to allow polymorphic constraints', () => {
+    const fn = type(function (a = Number | String) {})
 
     expect(() => {
       fn(5)
@@ -147,8 +147,8 @@ describe('argtyper', function () {
     }).to.throw(Error)
   })
 
-  it('should allow \'Repeat(constraint, amount)\' to create a list of length n', () => {
-    const sumTen = type((a = Repeat(Number, 10)) => {
+  it('should allow multiplication of a constraint to create a list of length n', () => {
+    const sumTen = type((a = [Number * 10]) => {
       return a.reduce((a, b) => a + b, 0)
     })
 
@@ -165,8 +165,8 @@ describe('argtyper', function () {
     }).to.throw(Error)
   })
 
-  it('should allow \'Repeat(constraint)\' to create a list of any length > 0', () => {
-    let sumN = type((a = Repeat(Number)) => {
+  it('should allow \'...\' to create a list of any length > 0', () => {
+    let sumN = type((a = [...Number]) => {
       return a.reduce((a, b) => a + b, 0)
     })
 
@@ -176,46 +176,6 @@ describe('argtyper', function () {
 
     expect(() => {
       return sumN([])
-    }).to.throw(Error)
-  })
-
-  it('\'Repeat\' should take only one or two arguments', () => {
-    expect(() => {
-      type((a = Repeat(Number, 5)) => {})
-    }).to.not.throw(Error)
-
-    expect(() => {
-      type((a = Repeat(Number)) => {})
-    }).to.not.throw(Error)
-
-    expect(() => {
-      type((a = Repeat()) => {})
-    }).to.throw(Error)
-
-    expect(() => {
-      type((a = Repeat(Number, 5, 2)) => {})
-    }).to.throw(Error)
-  })
-
-  it('\'Repeat\' should take only correctly typed arguments', () => {
-    expect(() => {
-      type((a = Repeat(5, 5)) => {})
-    }).to.throw(Error)
-
-    expect(() => {
-      type((a = Repeat(Number, String)) => {})
-    }).to.throw(Error)
-  })
-
-  it('\'Any\' should only work with >0 arguments', () => {
-    expect(() => {
-      type((a = Any()) => {})
-    }).to.throw(Error)
-  })
-
-  it('\'Any\' should only accept valid types as arguments', () => {
-    expect(() => {
-      type((a = Any(1, 2)) => {})
     }).to.throw(Error)
   })
 

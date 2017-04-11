@@ -77,7 +77,32 @@ exports.getType = function (AST, aliases) {
 
       return exports.wrapType(eval(AST.name))
     case 'ArrayExpression':
-      let arr = AST.elements.map((elem) => exports.getType(elem, aliases))
+      const elems = AST.elements
+      if (elems.length === 1) {
+        // Special case. [Constraint * n] or [...Constraint]
+        if (elems[0].type === 'BinaryExpression') {
+          const left = elems[0].left
+          const right = elems[0].right
+
+          assert(right.type === 'Literal' && parseInt(right.value) === right.value,
+            'Parse', 'Expected an integer literal as the constraint amount')
+
+          const constraint = exports.getType(left, aliases)
+          const amount = right.value
+          const arr = []
+
+          for (let i = 0; i < amount; i++) {
+            arr.push(constraint)
+          }
+
+          return new ArrayType(...arr)
+        } else if (elems[0].type === 'SpreadElement') {
+          const constraint = exports.getType(elems[0].argument, aliases)
+          return new RepeatedType(constraint)
+        }
+      }
+
+      let arr = elems.map((elem) => exports.getType(elem, aliases))
 
       return new ArrayType(...arr)
     case 'ObjectExpression':
@@ -89,34 +114,25 @@ exports.getType = function (AST, aliases) {
         obj[prop.key.name] = exports.getType(prop.value, aliases)
       }
       return new ObjectType(obj)
-    case 'CallExpression':
-      assert(AST.callee.type === 'Identifier', 'Parse', 'Expected an identifier for the callee\'s name')
-      if (AST.callee.name === 'Any') {
-        assert(AST.arguments.length > 0, 'Parse', 'Expected at least one constraint for \'Any\'')
-        return new PolymorphicType(...AST.arguments.map((type) => exports.getType(type, aliases)))
-      } else if (AST.callee.name === 'Repeat') {
-        assert(AST.arguments.length > 0 && AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
+    case 'BinaryExpression':
+      const operator = AST.operator
 
-        const constraint = exports.getType(AST.arguments[0], aliases)
+      if (operator === '|') {
+        const left = exports.getType(AST.left, aliases)
+        const right = exports.getType(AST.right, aliases)
 
-        if (AST.arguments.length === 2) {
-          const amountArg = AST.arguments[1]
-          assert(amountArg.type === 'Literal', 'Parse', 'Expected a literal as the second argument to \'Repeat\'')
-            .and(parseInt(amountArg.value) === amountArg.value, 'Parse', 'Expected an integer as the second argument to \'Repeat\'')
-
-          const amount = parseInt(amountArg.value)
-          const arr = []
-
-          for (let i = 0; i < amount; i++) {
-            arr.push(constraint)
-          }
-
-          return new ArrayType(...arr)
-        } else {
-          return new RepeatedType(constraint)
+        if (left.constructor === PolymorphicType) {
+          return new PolymorphicType(...left.types, right)
+        } else if (right.constructor === PolymorphicType) {
+          return new PolymorphicType(left, ...right.types)
+        } else if (left.constructor === PolymorphicType && right.constructor === PolymorphicType) {
+          return new PolymorphicType(...left.types, ...right.types)
         }
+
+        return new PolymorphicType(left, right)
       } else {
-        throw new Error(`Invalid constraint function call, ${AST.callee.name}`)
+        assert(false, 'Parse', `Unexpected operator ${operator} in a constraint`)
+        break
       }
     default:
       throw new Error(`Invalid constraint type, ${type}!`)
