@@ -58,18 +58,24 @@ exports.wrapValue = function (val) {
 /*
  * Takes an AST and returns a JS value representing it
  */
-exports.getType = function (AST) {
+exports.getType = function (AST, aliases) {
   const type = AST.type // e.g. 'Identifier', 'ArrayExpression', etc...
 
   switch (type) {
     case 'Identifier':
+      for (let alias of aliases) {
+        if (alias.name === AST.name) {
+          return exports.getType(alias.AST, aliases)
+        }
+      }
+
       if (AST.name === 'Any') {
         return new AnyType()
       }
 
       return exports.wrapType(eval(AST.name))
     case 'ArrayExpression':
-      let arr = AST.elements.map((elem) => exports.getType(elem))
+      let arr = AST.elements.map((elem) => exports.getType(elem, aliases))
 
       return new ArrayType(...arr)
     case 'ObjectExpression':
@@ -78,18 +84,18 @@ exports.getType = function (AST) {
       for (let prop of AST.properties) {
         assert(prop.key.type === 'Identifier', 'Parse', 'Expected an identifier for every key')
 
-        obj[prop.key.name] = exports.getType(prop.value)
+        obj[prop.key.name] = exports.getType(prop.value, aliases)
       }
       return new ObjectType(obj)
     case 'CallExpression':
       assert(AST.callee.type === 'Identifier', 'Parse', 'Expected an identifier for the callee\'s name')
       if (AST.callee.name === 'Any') {
         assert(AST.arguments.length > 0, 'Parse', 'Expected at least one constraint for \'Any\'')
-        return new PolymorphicType(...AST.arguments.map((type) => exports.getType(type)))
+        return new PolymorphicType(...AST.arguments.map((type) => exports.getType(type, aliases)))
       } else if (AST.callee.name === 'Repeat') {
         assert(0 < AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
 
-        const constraint = exports.getType(AST.arguments[0])
+        const constraint = exports.getType(AST.arguments[0], aliases)
 
         if (AST.arguments.length === 2) {
           const amountArg = AST.arguments[1]

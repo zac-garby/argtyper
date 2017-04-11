@@ -29,7 +29,7 @@ exports.type = function (fn) {
   const types = argsAST.map((arg) => {
     assert(arg.type === 'AssignmentPattern', 'Parse', 'Expected a default value to be used as the type for all arguments.')
 
-    return getType(arg.right)
+    return getType(arg.right, aliases)
   })
 
   return function (...args) {
@@ -56,7 +56,7 @@ exports.typedef = function (fn) {
 
   const alias = {
     name: exp.params[0].name,
-    type: getType(exp.body)
+    AST: exp.body
   }
 
   aliases.push(alias)
