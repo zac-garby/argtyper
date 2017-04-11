@@ -57,6 +57,10 @@ exports.getType = function (AST) {
 
   switch (type) {
     case 'Identifier':
+      if (AST.name === 'Any') {
+        return null
+      }
+      
       return exports.wrapType(eval(AST.name))
     case 'ArrayExpression':
       let arr = AST.elements.map((elem) => exports.getType(elem))
