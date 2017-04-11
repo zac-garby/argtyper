@@ -13,7 +13,7 @@ exports.ObjectType = class ObjectType {
   check (args) {
     const that = args[0]
 
-    assert(args.length > 0, 'Type', `Expected at least one more argument to match ${this}`)
+    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`)
       .and(that.constructor === ObjectType, 'Type',`Wrong type. Expected an object, but found ${that.name}`)
 
     const thisLength = Object.keys(this.model).length,

@@ -17,3 +17,12 @@ exports.assert = function (truth, type, message, stacktrace=null) {
 
   return { and: exports.assert }
 }
+
+exports.throws = function (fn, ...args) {
+  try {
+    fn(...args)
+    return false
+  } catch (e) {
+    return true
+  }
+}

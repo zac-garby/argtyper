@@ -15,7 +15,7 @@ exports.ArrayType = class ArrayType {
   check (args) {
     const that = args[0]
 
-    assert(args.length > 0, 'Type', `Expected at least one more argument to match ${this}`)
+    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`)
       .and(that.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${that.name}`)
 
     let elems = that.elements,
@@ -25,7 +25,7 @@ exports.ArrayType = class ArrayType {
       elems = type.check(elems)
     }
 
-    if (elems.length)
+    assert(elems.length === 0, 'Type', `${elems.length} too many value(s)`)
 
     return args.slice(1)
   }

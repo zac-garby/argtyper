@@ -1,6 +1,9 @@
 const LiteralType = require('./types/LiteralType').LiteralType,
   ArrayType = require('./types/ArrayType').ArrayType,
-  ObjectType = require('./types/ObjectType').ObjectType
+  ObjectType = require('./types/ObjectType').ObjectType,
+  AnyType = require('./types/AnyType').AnyType,
+  PolymorphicType = require('./types/PolymorphicType').PolymorphicType,
+  RepeatedType = require('./types/RepeatedType').RepeatedType
 
 const assert = require('./errors').assert
 
@@ -52,15 +55,18 @@ exports.wrapValue = function (val) {
   }
 }
 
+/*
+ * Takes an AST and returns a JS value representing it
+ */
 exports.getType = function (AST) {
   const type = AST.type // e.g. 'Identifier', 'ArrayExpression', etc...
 
   switch (type) {
     case 'Identifier':
       if (AST.name === 'Any') {
-        return null
+        return new AnyType()
       }
-      
+
       return exports.wrapType(eval(AST.name))
     case 'ArrayExpression':
       let arr = AST.elements.map((elem) => exports.getType(elem))
@@ -75,6 +81,35 @@ exports.getType = function (AST) {
         obj[prop.key.name] = exports.getType(prop.value)
       }
       return new ObjectType(obj)
+    case 'CallExpression':
+      assert(AST.callee.type === 'Identifier', 'Parse', 'Expected an identifier for the callee\'s name')
+      if (AST.callee.name === 'Any') {
+        assert(AST.arguments.length > 0, 'Parse', 'Expected at least one constraint for \'Any\'')
+        return new PolymorphicType(...AST.arguments.map((type) => exports.getType(type)))
+      } else if (AST.callee.name === 'Repeat') {
+        assert(0 < AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
+
+        const constraint = exports.getType(AST.arguments[0])
+
+        if (AST.arguments.length === 2) {
+          const amountArg = AST.arguments[1]
+          assert(amountArg.type === 'Literal', 'Parse', 'Expected a literal as the second argument to \'Repeat\'')
+            .and(parseInt(amountArg.value) === amountArg.value, 'Parse', 'Expected an integer as the second argument to \'Repeat\'')
+
+          const amount = parseInt(amountArg.value),
+            arr = []
+
+          for (let i = 0; i < amount; i++) {
+            arr.push(constraint)
+          }
+
+          return new ArrayType(...arr)
+        } else {
+          return new RepeatedType(constraint)
+        }
+      } else {
+        throw new Error(`Invalid constraint function call, ${AST.callee.name}`)
+      }
     default:
       throw new Error(`Invalid constraint type, ${type}!`)
   }

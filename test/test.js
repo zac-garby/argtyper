@@ -1,7 +1,7 @@
 var chai = require('chai')
 var expect = chai.expect
 
-var argtyper = require('../index')
+var argtyper = require('../js/index')
 
 var type = argtyper.type,
   typeAll = argtyper.typeAll,

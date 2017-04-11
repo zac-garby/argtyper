@@ -7,7 +7,6 @@ const mapValues = require('object.map')
 
 const assert = require('./errors').assert
 
-const error = require('./helpers').error
 const wrapValue = require('./helpers').wrapValue
 const getType = require('./helpers').getType
 
@@ -19,6 +18,8 @@ function checkArguments (types, args) {
   for (let type of types) {
     args = type.check(args)
   }
+
+  assert(args.length === 0, 'Type', `${args.length} too many arguments!`)
 }
 
 exports.type = function (fn) {
@@ -61,7 +62,6 @@ exports.typedef = function (fn) {
   aliases.push(alias)
 }
 
-exports.type(function (a={x: Number, y: [String, Number]}, b=Number) {})({
-  x: 5,
-  y: 5
-}, 5)
+exports.type(function (a=Repeat(Number)) {
+  console.log(a)
+})([1, 2, 3, 4, 5])
