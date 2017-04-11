@@ -1,4 +1,4 @@
-exports.error = function (type, text, stacktrace=null) {
+exports.error = function (type, text, stacktrace = null) {
   if (stacktrace) {
     let str = `(${type}) ${text}`
     for (const item of stacktrace.reverse()) {
@@ -10,7 +10,7 @@ exports.error = function (type, text, stacktrace=null) {
   throw new Error(`(${type}) ${text}`)
 }
 
-exports.assert = function (truth, type, message, stacktrace=null) {
+exports.assert = function (truth, type, message, stacktrace = null) {
   if (!truth) {
     exports.error(type, message, stacktrace)
   }

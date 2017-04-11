@@ -1,11 +1,11 @@
-const LiteralType = require('./types/LiteralType').LiteralType,
-  ArrayType = require('./types/ArrayType').ArrayType,
-  ObjectType = require('./types/ObjectType').ObjectType,
-  AnyType = require('./types/AnyType').AnyType,
-  PolymorphicType = require('./types/PolymorphicType').PolymorphicType,
-  RepeatedType = require('./types/RepeatedType').RepeatedType
+/* eslint-disable no-eval */
 
-const assert = require('./errors').assert
+const LiteralType = require('./types/LiteralType').LiteralType
+const ArrayType = require('./types/ArrayType').ArrayType
+const ObjectType = require('./types/ObjectType').ObjectType
+const AnyType = require('./types/AnyType').AnyType
+const PolymorphicType = require('./types/PolymorphicType').PolymorphicType
+const RepeatedType = require('./types/RepeatedType').RepeatedType
 
 /*
  * Number -> LiteralType(Number)
@@ -93,7 +93,7 @@ exports.getType = function (AST, aliases) {
         assert(AST.arguments.length > 0, 'Parse', 'Expected at least one constraint for \'Any\'')
         return new PolymorphicType(...AST.arguments.map((type) => exports.getType(type, aliases)))
       } else if (AST.callee.name === 'Repeat') {
-        assert(0 < AST.arguments.length && AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
+        assert(AST.arguments.length > 0 && AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
 
         const constraint = exports.getType(AST.arguments[0], aliases)
 
@@ -102,8 +102,8 @@ exports.getType = function (AST, aliases) {
           assert(amountArg.type === 'Literal', 'Parse', 'Expected a literal as the second argument to \'Repeat\'')
             .and(parseInt(amountArg.value) === amountArg.value, 'Parse', 'Expected an integer as the second argument to \'Repeat\'')
 
-          const amount = parseInt(amountArg.value),
-            arr = []
+          const amount = parseInt(amountArg.value)
+          const arr = []
 
           for (let i = 0; i < amount; i++) {
             arr.push(constraint)
@@ -120,3 +120,5 @@ exports.getType = function (AST, aliases) {
       throw new Error(`Invalid constraint type, ${type}!`)
   }
 }
+
+/* eslint-enable no-eval */

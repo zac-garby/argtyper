@@ -15,10 +15,10 @@ exports.ObjectType = class ObjectType {
 
     const that = args[0]
 
-    assert(that.constructor === ObjectType, 'Type',`Wrong type. Expected an object, but found ${that.name}`, stacktrace)
+    assert(that.constructor === ObjectType, 'Type', `Wrong type. Expected an object, but found ${that.name}`, stacktrace)
 
-    const thisLength = Object.keys(this.model).length,
-        thatLength = Object.keys(that.model).length
+    const thisLength = Object.keys(this.model).length
+    const thatLength = Object.keys(that.model).length
 
     assert(thisLength === thatLength, 'Type', `Expected ${thisLength} properties, but found ${thatLength}`, stacktrace)
 

@@ -3,18 +3,18 @@ var expect = chai.expect
 
 var argtyper = require('../js/index')
 
-var type = argtyper.type,
-  typeAll = argtyper.typeAll,
-  typedef = argtyper.typedef
+var type = argtyper.type
+var typeAll = argtyper.typeAll
+var typedef = argtyper.typedef
 
 // Define a test function
-function add(a=Number, b=Number) {
+function add (a = Number, b = Number) {
   return a + b
 }
 
-add = type(add)
+add = type(add) // eslint-disable-line
 
-describe('argtyper', function() {
+describe('argtyper', function () {
   it('should allow correctly typed arguments', () => {
     expect(() => {
       add(5, 5)
@@ -44,7 +44,7 @@ describe('argtyper', function() {
   })
 
   it('should work with \'Any(constraint, ...)\' to allow polymorphic constraints', () => {
-    const fn = type(function(a=Any(Number, String)) {})
+    const fn = type(function (a = Any(Number, String)) {})
 
     expect(() => {
       fn(5)
@@ -60,7 +60,7 @@ describe('argtyper', function() {
   })
 
   it('should work with \'Any\' to allow untyped arguments', () => {
-    const fn = type(function(a=Any, b=String) {})
+    const fn = type(function (a = Any, b = String) {})
 
     expect(() => {
       fn(true, 'hello')
@@ -76,7 +76,7 @@ describe('argtyper', function() {
   })
 
   it('should work with n-dimensional arrays', () => {
-    const fn = type(function(a=[Number, [Number, [Number, [Number]]]]) {})
+    const fn = type(function (a = [Number, [Number, [Number, [Number]]]]) {})
 
     expect(() => {
       fn([1, [2, [3, [4]]]])
@@ -88,7 +88,7 @@ describe('argtyper', function() {
   })
 
   it('should work with n-dimensional objects', () => {
-    const fn = type(function(a={x: {y: {z: Number}}}) {})
+    const fn = type(function (a = {x: {y: {z: Number}}}) {})
 
     expect(() => {
       fn({x: {y: {z: 5}}})
@@ -102,7 +102,7 @@ describe('argtyper', function() {
   it('should work with object aliases', () => {
     typedef(Vector => ({x: Number, y: Number}))
 
-    const mul = type((a=Vector, b=Number) => {
+    const mul = type((a = Vector, b = Number) => {
       return { x: a.x * b, y: a.y * b }
     })
 
@@ -118,7 +118,7 @@ describe('argtyper', function() {
   it('should work with array aliases', () => {
     typedef(SetOfThree => [Number, Number, Number])
 
-    const sumOfThree = type((x=SetOfThree) => {
+    const sumOfThree = type((x = SetOfThree) => {
       return x[0] + x[1] + x[2]
     })
 
@@ -134,7 +134,7 @@ describe('argtyper', function() {
   it('should work with literal aliases', () => {
     typedef(Num => Number)
 
-    const add = type((a=Num, b=Num) => {
+    const add = type((a = Num, b = Num) => {
       return a + b
     })
 
@@ -148,7 +148,7 @@ describe('argtyper', function() {
   })
 
   it('should allow \'Repeat(constraint, amount)\' to create a list of length n', () => {
-    const sumTen = type((a=Repeat(Number, 10)) => {
+    const sumTen = type((a = Repeat(Number, 10)) => {
       return a.reduce((a, b) => a + b, 0)
     })
 
@@ -166,7 +166,7 @@ describe('argtyper', function() {
   })
 
   it('should allow \'Repeat(constraint)\' to create a list of any length > 0', () => {
-    let sumN = type((a=Repeat(Number)) => {
+    let sumN = type((a = Repeat(Number)) => {
       return a.reduce((a, b) => a + b, 0)
     })
 
@@ -181,82 +181,82 @@ describe('argtyper', function() {
 
   it('\'Repeat\' should take only one or two arguments', () => {
     expect(() => {
-      type((a=Repeat(Number, 5)) => {})
+      type((a = Repeat(Number, 5)) => {})
     }).to.not.throw(Error)
 
     expect(() => {
-      type((a=Repeat(Number)) => {})
+      type((a = Repeat(Number)) => {})
     }).to.not.throw(Error)
 
     expect(() => {
-      type((a=Repeat()) => {})
+      type((a = Repeat()) => {})
     }).to.throw(Error)
 
     expect(() => {
-      type((a=Repeat(Number, 5, 2)) => {})
+      type((a = Repeat(Number, 5, 2)) => {})
     }).to.throw(Error)
   })
 
   it('\'Repeat\' should take only correctly typed arguments', () => {
     expect(() => {
-      type((a=Repeat(5, 5)) => {})
+      type((a = Repeat(5, 5)) => {})
     }).to.throw(Error)
 
     expect(() => {
-      type((a=Repeat(Number, String)) => {})
+      type((a = Repeat(Number, String)) => {})
     }).to.throw(Error)
   })
 
   it('\'Any\' should only work with >0 arguments', () => {
     expect(() => {
-      type((a=Any()) => {})
+      type((a = Any()) => {})
     }).to.throw(Error)
   })
 
   it('\'Any\' should only accept valid types as arguments', () => {
     expect(() => {
-      type((a=Any(1, 2)) => {})
+      type((a = Any(1, 2)) => {})
     }).to.throw(Error)
   })
 
   it('typeAll should work on an object only containing functions', () => {
     const obj = {
-      add: function(x=Number, y=Number) {
+      add: function (x = Number, y = Number) {
         return x + y
       },
-      mul: function(x=Number, y=Number) {
+      mul: function (x = Number, y = Number) {
         return x * y
       }
     }
 
-    expect(function() {
+    expect(function () {
       typeAll(obj)
     }).to.not.throw(Error)
 
     expect(obj.add(3, 5)).to.equal(8)
     expect(obj.mul(2, 10)).to.equal(20)
 
-    expect(function() {
+    expect(function () {
       obj.add('a', 1)
     }).to.throw(Error)
   })
 
   it('typeAll should work on a mix of functions and other values', () => {
     const obj = {
-      add: function(x=Number, y=Number) {
+      add: function (x = Number, y = Number) {
         return x + y
       },
       j: 10,
       k: {}
     }
 
-    expect(function() {
+    expect(function () {
       typeAll(obj)
     }).to.not.throw(Error)
 
     expect(obj.add(3, 5)).to.equal(8)
 
-    expect(function() {
+    expect(function () {
       obj.add('a', 1)
     }).to.throw(Error)
   })

@@ -1,5 +1,3 @@
-const assert = require('../errors').assert
-
 exports.AnyType = class AnyType {
   constructor () {
     this.name = 'any'

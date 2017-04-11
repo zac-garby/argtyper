@@ -19,8 +19,8 @@ exports.ArrayType = class ArrayType {
 
     assert(that.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${that.name}`, stacktrace)
 
-    let elems = that.elements,
-      types = this.elements
+    let elems = that.elements
+    let types = this.elements
 
     for (let t = 0; t < types.length; t++) {
       const type = types[t]

@@ -17,10 +17,23 @@
   },
   "homepage": "https://github.com/Zac-Garby/argtyper#readme",
   "devDependencies": {
-    "chai": "*"
+    "chai": "*",
+    "standard": "^10.0.1"
   },
   "dependencies": {
     "esprima": "^3.1.3",
     "object.map": "^1.0.0"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "it",
+      "Any",
+      "Vector",
+      "SetOfThree",
+      "Num",
+      "Repeat",
+      "assert"
+    ]
   }
 }

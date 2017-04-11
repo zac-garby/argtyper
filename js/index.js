@@ -3,7 +3,6 @@
 'use strict'
 
 const esprima = require('esprima')
-const mapValues = require('object.map')
 
 const assert = require('./errors').assert
 
@@ -24,8 +23,8 @@ function checkArguments (types, args) {
 }
 
 exports.type = function (fn) {
-  const exp = esprima.parse(`(${fn.toString()})`).body[0].expression,
-    argsAST = exp.params
+  const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
+  const argsAST = exp.params
 
   const types = argsAST.map((arg) => {
     assert(arg.type === 'AssignmentPattern', 'Parse', 'Expected a default value to be used as the type for all arguments.')
@@ -43,7 +42,7 @@ exports.type = function (fn) {
 exports.typeAll = function (object) {
   for (var prop in object) {
     if (object.hasOwnProperty(prop) && typeof object[prop] === 'function') {
-      object[prop] = exports.type(object[prop]);
+      object[prop] = exports.type(object[prop])
     }
   }
 }

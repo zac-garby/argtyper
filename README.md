@@ -1,5 +1,7 @@
 # argtyper
 
+[![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 ### JS Type-Constraints without compilation.
 
 Type checking is very useful in JavaScript - it helps catch a number of different bugs.
