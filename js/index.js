@@ -10,6 +10,8 @@ const assert = require('./errors').assert
 const wrapValue = require('./helpers').wrapValue
 const getType = require('./helpers').getType
 
+const aliases = []
+
 function checkArguments (types, args) {
   args = args.map(wrapValue)
 
@@ -45,4 +47,17 @@ exports.typeAll = function (object) {
   }
 }
 
-exports.typedef = require('./alias').typedef
+exports.typedef = function (fn) {
+  const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
+
+  assert(exp.type === 'ArrowFunctionExpression', 'Parse', 'Expected an arrow function as the only argument to typedef')
+    .and(exp.params.length === 1, 'Parse', 'Expected only one argument to the arrow function')
+    .and(exp.params[0].type === 'Identifier', 'Parse', 'Expected an identifier as the alias name')
+
+  const alias = {
+    name: exp.params[0].name,
+    type: getType(exp.body)
+  }
+
+  aliases.push(alias)
+}
