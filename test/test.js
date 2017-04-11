@@ -1,7 +1,7 @@
 var chai = require('chai')
 var expect = chai.expect
 
-var argtyper = require('../index')
+var argtyper = require('../js/index')
 
 var type = argtyper.type,
   typeAll = argtyper.typeAll,
@@ -43,7 +43,7 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
-  it('should work with the \'Any\' class to allow polymorphic constraints', () => {
+  it('should work with \'Any(constraint, ...)\' to allow polymorphic constraints', () => {
     const fn = type(function(a=Any(Number, String)) {})
 
     expect(() => {
@@ -59,7 +59,7 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
-  it('should work with the \'Any\' class to allow untyped arguments', () => {
+  it('should work with \'Any\' to allow untyped arguments', () => {
     const fn = type(function(a=Any, b=String) {})
 
     expect(() => {
@@ -131,7 +131,7 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
-  it('should work with single-type aliases', () => {
+  it('should work with literal aliases', () => {
     typedef(Num => Number)
 
     const add = type((a=Num, b=Num) => {
@@ -147,7 +147,7 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
-  it('should allow \'Repeat\' to create a list of length n', () => {
+  it('should allow \'Repeat(constraint, amount)\' to create a list of length n', () => {
     const sumTen = type((a=Repeat(Number, 10)) => {
       return a.reduce((a, b) => a + b, 0)
     })
@@ -162,6 +162,20 @@ describe('argtyper', function() {
 
     expect(() => {
       return sumTen([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+    }).to.throw(Error)
+  })
+
+  it('should allow \'Repeat(constraint)\' to create a list of any length > 0', () => {
+    let sumN = type((a=Repeat(Number)) => {
+      return a.reduce((a, b) => a + b, 0)
+    })
+
+    expect(() => {
+      return sumN([1, 2, 3])
+    }).to.not.throw(Error).and.to.equal(6)
+
+    expect(() => {
+      return sumN([])
     }).to.throw(Error)
   })
 
