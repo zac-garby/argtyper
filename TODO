@@ -1,6 +1,6 @@
  ∙ Constraints in classes: constructors, getters, setters, and methods
  ∙ Functionality to type function arguments. Type for the arguments and arguments
-   ∙ e.g. 'function (f=((x=Number, y=Number) => {}))', when typed, would take
+   ∙ e.g. 'function (f=((x=Number, y=Number) => Number))', when typed, would take
      a function fitting the definition
  ∙ Change polymorphic syntax to 'Type | Type | ...'
  ∙ Change bounded repetition syntax to '[Type * n]'
