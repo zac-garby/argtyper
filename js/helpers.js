@@ -7,6 +7,8 @@ const AnyType = require('./types/AnyType').AnyType
 const PolymorphicType = require('./types/PolymorphicType').PolymorphicType
 const RepeatedType = require('./types/RepeatedType').RepeatedType
 
+const assert = require('./errors').assert
+
 /*
  * Number -> LiteralType(Number)
  * [Number, [String, Number]] -> ArrayType(LiteralType(Number), ArrayType ...)
