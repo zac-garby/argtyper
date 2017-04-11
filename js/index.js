@@ -15,8 +15,9 @@ const aliases = []
 function checkArguments (types, args) {
   args = args.map(wrapValue)
 
-  for (let type of types) {
-    args = type.check(args)
+  for (let t = 0; t < types.length; t++) {
+    const type = types[t]
+    args = type.check(args, [`argument ${t + 1}`])
   }
 
   assert(args.length === 0, 'Type', `${args.length} too many arguments!`)

@@ -12,18 +12,21 @@ exports.RepeatedType = class RepeatedType {
     return `[...${this.type}]`
   }
 
-  check (args) {
+  check (args, stacktrace) {
+    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`, stacktrace)
+
     const that = args[0]
 
-    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`)
-      .and(that.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${that.name}`)
-      .and(that.elements.length > 0, 'Type', 'Expected at least one element in the array')
+    assert(that.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${that.name}`, stacktrace)
+      .and(that.elements.length > 0, 'Type', 'Expected at least one element in the array', stacktrace)
 
-    for (let elem of that.elements) {
+    for (let i = 0; i < that.elements.length; i++) {
+      let elem = that.elements[i]
       try {
         this.type.check([elem])
       } catch (e) {
-        return assert(false, 'Type', 'Wrong type')
+        return assert(false, 'Type', `Wrong type. Expected ${this.type}, but found ${elem}`,
+          [...stacktrace, `element ${i + 1}`])
       }
     }
 

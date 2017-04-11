@@ -12,7 +12,9 @@ exports.PolymorphicType = class PolymorphicType {
     }, '<') + '>'
   }
 
-  check (args) {
+  check (args, stacktrace) {
+    assert(args.length > 0, 'Type', `Expected at least one more argument to match ${this}`, stacktrace)
+
     const that = args[0]
 
     const match = this.types.some((type) => {
@@ -24,8 +26,7 @@ exports.PolymorphicType = class PolymorphicType {
       }
     })
 
-    assert(args.length > 0, 'Type', `Expected at least one more argument to match ${this}`)
-      .and(match, 'Type', `Wrong type. Expected ${this} but found ${that}`)
+    assert(match, 'Type', `Wrong type. Expected ${this} but found ${that}`, stacktrace)
 
     return args.slice(1)
   }

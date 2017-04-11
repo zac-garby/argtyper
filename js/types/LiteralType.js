@@ -10,12 +10,13 @@ exports.LiteralType = class LiteralType {
     return this.type.name
   }
 
-  check (args) {
+  check (args, stacktrace) {
+    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`, stacktrace)
+
     const that = args[0]
 
-    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`)
-      .and(that.constructor === LiteralType, 'Type',`Wrong type. Expected a basic type, but found ${that.name}`)
-      .and(that.type === this.type, 'Type', `Wrong type. Expected ${this} but found ${that}`)
+    assert(that.constructor === LiteralType, 'Type',`Wrong type. Expected a basic type, but found ${that.name}`, stacktrace)
+      .and(that.type === this.type, 'Type', `Wrong type. Expected ${this} but found ${that}`, stacktrace)
 
     return args.slice(1)
   }

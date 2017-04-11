@@ -9,7 +9,7 @@ exports.AnyType = class AnyType {
     return 'Any'
   }
 
-  check (args) {
+  check (args, stacktrace) {
     return args.slice(1)
   }
 }
