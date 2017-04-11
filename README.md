@@ -106,7 +106,7 @@ of an object.
 
 ## Documentation
 
-### Types of constraints
+### Syntax overview
 
 There are many different types of constraints in _argtyper_. Here's a list!
 
@@ -132,21 +132,21 @@ There are many different types of constraints in _argtyper_. Here's a list!
     - Example: `{x: Number, y: Number}` allows a two-dimensional vector in the
       form of an object with an x and y field, both numbers.
 
- - `Any(Constraint, Constraint ...)` - It's also possible for an argument to
-   accept multiple types, using the _Any()_ syntax. It's fairly simple - here's
+ - `Constraint | Constraint[ | Constraint ...]` - It's also possible for an argument to
+   accept multiple types, using the `|` operator. It's fairly simple - here's
    an example:
-    - Example: `Any(Number, String)` allows either a number or a string
+    - Example: `Number | String | Boolean` allows a number, string, or boolean
 
  - `Any` - The word _Any_ on its own just allows anything through. It's how
    you can make an untyped argument in _argtyper_.
 
- - `Repeat(Constraint, amount)` - Is the same as writing
+ - `[Constraint * amount]` - Is the same as writing
    `[Constraint, Constraint ... (amount times)]`.
-    - Example: `Repeat(Number, 10)` allows an array of 10 numbers
+    - Example: `[Number * 10]` allows an array of 10 numbers
 
- - `Repeat(Constraint)` - A list of any size (except from 0) containing only
+ - `[...Constraint]` - A list of any size (except from 0) containing only
    `Constraint`s.
-    - Example: `Repeat(String)` allows an array of any size > 0 of strings
+    - Example: `[...String]` allows an array of any size > 0 of strings
 
 ### Aliases - `typedef(Name => Constraint)`
 
@@ -199,7 +199,7 @@ above:
 
 ```javascript
 typedef(ThreeNumbers => [Number, Number, Number])
-typedef(AddOperand => Any(Number, String))
+typedef(AddOperand => Number | String)
 typedef(ThreeAddOperands => [AddOperand, AddOperand, AddOperand])
 
 function sumThree (a=ThreeNumbers) {
@@ -236,7 +236,7 @@ function add (a=N, b=N) {
 }
 ```
 
-### Repetition - `Repeat(Constraint[, n])`
+### Repetition - `[Constraint * n]`
 
 Sometimes, you want an array with lots of elements in it. Here's an example:
 
@@ -248,20 +248,17 @@ function sumOneHundred (a=[Number, Number, Number ... Number]) {
 
 (I omitted 96 `Number`s, but you can imagine how long it'd be if I wrote them all out)
 
-There's a better way to do this, of course. You can use the `Repeat` function:
+There's a better way to do this, of course. You can use the `|` operator:
 
 ```javascript
-function sumOneHundred (a=Repeat(Number, 100)) {
+function sumOneHundred (a=[Number * 100]) {
   return a.reduce((a, b) => a + b, 0)
 }
 ```
 
 As you can see, this looks a lot better.
 
-In the future, I'm planning on supporting infinite repetition, but as of now
-you have to give two arguments - the type and the amount.
-
-Anyway, to pass the one hundred arguments to this function, you'd do the following:
+To pass the one hundred arguments to this function, you'd do the following:
 
 ```javascript
 sumOneHundred([7, 2, 3, 10, 4, ...])
@@ -269,15 +266,13 @@ sumOneHundred([7, 2, 3, 10, 4, ...])
 
 But obviously just a whole lot more elements in the array.
 
-This works because calling `Repeat` as a constraint just expands to the array.
-
 #### Infinite repetition
 
-Infinite repetition occurs if you don't give `Repeat` a second argument. Here's
-an example:
+You can also define a constraint which matches a list of any size greater than 0
+using the spread (`...`) operator:
 
 ```javascript
-function sumN (xs=Repeat(Number)) {
+function sumN (xs=[...Number]) {
   return xs.reduce((a, b) => a + b, 0)
 }
 
@@ -285,3 +280,15 @@ sumN([1, 2, 3]) //=> 6
 sumN([1])       //=> 1
 sumN([])        //=> Error
 ```
+
+If you also want to allow an array of length 0, you can use the following hack,
+until I add a special syntax for it:
+
+```javascript
+function sumN (xs=[] | [...Number]) {
+  return xs.reduce((a, b) => a + b, 0)
+}
+```
+
+Which works because it can either match an empty array or an array with some
+numbers in it.
