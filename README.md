@@ -7,7 +7,7 @@ However, to actually use type checking normally, you'd install a library such as
 which is great, but you have to compile your program. This not only takes time, but is
 annoying to set up.
 
-_argtyper_, is a better way to implement type checking for function arguments.
+_argtyper_ is a better way to implement type checking for function arguments.
 Because of the way it works, it's only _possible_ at the moment to do it for arguments -
 sadly not variable declarations. But, that's not a huge problem because most of the bugs
 actually come from wrongly typed arguments.
@@ -138,10 +138,19 @@ There are many different types of constraints in _argtyper_. Here's a list!
  - `Any` - The word _Any_ on its own just allows anything through. It's how
    you can make an untyped argument in _argtyper_.
 
-### Aliases
+ - `Repeat(Constraint, amount)` - Is the same as writing
+   `[Constraint, Constraint ... (amount times)]`.
+    - Example: `Repeat(Number, 10)` allows an array of 10 numbers
 
-Say you're writing a game. You'd probably use a lot of Vectors. In _argtyper_,
-you might represent a vector similar to the following:
+ - `Repeat(Constraint)` - A list of any size (except from 0) containing only
+   `Constraint`s.
+    - Example: `Repeat(String)` allows an array of any size > 0 of strings
+
+### Aliases - `typedef(Name => Constraint)`
+
+Say you're writing a game. You'd probably use a lot of Vectors for velocity,
+position etc... In _argtyper_, you might represent a vector similar to the
+following:
 
 ```javascript
 function addThreeVectors (
@@ -225,13 +234,13 @@ function add (a=N, b=N) {
 }
 ```
 
-### Repetition
+### Repetition - `Repeat(Constraint[, n])`
 
 Sometimes, you want an array with lots of elements in it. Here's an example:
 
 ```javascript
 function sumOneHundred (a=[Number, Number, Number ... Number]) {
-  ...
+  return a.reduce((a, b) => a + b, 0)
 }
 ```
 
@@ -241,7 +250,7 @@ There's a better way to do this, of course. You can use the `Repeat` function:
 
 ```javascript
 function sumOneHundred (a=Repeat(Number, 100)) {
-  ...
+  return a.reduce((a, b) => a + b, 0)
 }
 ```
 
@@ -259,3 +268,18 @@ sumOneHundred([7, 2, 3, 10, 4, ...])
 But obviously just a whole lot more elements in the array.
 
 This works because calling `Repeat` as a constraint just expands to the array.
+
+#### Infinite repetition
+
+Infinite repetition occurs if you don't give `Repeat` a second argument. Here's
+an example:
+
+```javascript
+function sumN (xs=Repeat(Number)) {
+  return xs.reduce((a, b) => a + b, 0)
+}
+
+sumN([1, 2, 3]) //=> 6
+sumN([1])       //=> 1
+sumN([])        //=> Error
+```
