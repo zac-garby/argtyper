@@ -179,6 +179,46 @@ describe('argtyper', function() {
     }).to.throw(Error)
   })
 
+  it('\'Repeat\' should take only one or two arguments', () => {
+    expect(() => {
+      type((a=Repeat(Number, 5)) => {})
+    }).to.not.throw(Error)
+
+    expect(() => {
+      type((a=Repeat(Number)) => {})
+    }).to.not.throw(Error)
+
+    expect(() => {
+      type((a=Repeat()) => {})
+    }).to.throw(Error)
+
+    expect(() => {
+      type((a=Repeat(Number, 5, 2)) => {})
+    }).to.throw(Error)
+  })
+
+  it('\'Repeat\' should take only correctly typed arguments', () => {
+    expect(() => {
+      type((a=Repeat(5, 5)) => {})
+    }).to.throw(Error)
+
+    expect(() => {
+      type((a=Repeat(Number, String)) => {})
+    }).to.throw(Error)
+  })
+
+  it('\'Any\' should only work with >0 arguments', () => {
+    expect(() => {
+      type((a=Any()) => {})
+    }).to.throw(Error)
+  })
+
+  it('\'Any\' should only accept valid types as arguments', () => {
+    expect(() => {
+      type((a=Any(1, 2)) => {})
+    }).to.throw(Error)
+  })
+
   it('typeAll should work on an object only containing functions', () => {
     const obj = {
       add: function(x=Number, y=Number) {

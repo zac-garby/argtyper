@@ -93,7 +93,7 @@ exports.getType = function (AST, aliases) {
         assert(AST.arguments.length > 0, 'Parse', 'Expected at least one constraint for \'Any\'')
         return new PolymorphicType(...AST.arguments.map((type) => exports.getType(type, aliases)))
       } else if (AST.callee.name === 'Repeat') {
-        assert(0 < AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
+        assert(0 < AST.arguments.length && AST.arguments.length < 3, 'Parse', 'Expected one or two arguments to \'Repeat\'')
 
         const constraint = exports.getType(AST.arguments[0], aliases)
 
