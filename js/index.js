@@ -61,7 +61,3 @@ exports.typedef = function (fn) {
 
   aliases.push(alias)
 }
-
-exports.type(function (a=Repeat(Number)) {
-  console.log(a)
-})([1, 2, 3, 4, 5])
