@@ -7,6 +7,8 @@ const AnyType = require('./types/AnyType').AnyType
 const PolymorphicType = require('./types/PolymorphicType').PolymorphicType
 const RepeatedType = require('./types/RepeatedType').RepeatedType
 
+const assert = require('./errors').assert
+
 /*
  * Number -> LiteralType(Number)
  * [Number, [String, Number]] -> ArrayType(LiteralType(Number), ArrayType ...)
@@ -87,7 +89,7 @@ exports.getType = function (AST, aliases) {
         obj[prop.key.name] = exports.getType(prop.value, aliases)
       }
       return new ObjectType(obj)
-    case 'CallExpression':
+    /* case 'CallExpression':
       assert(AST.callee.type === 'Identifier', 'Parse', 'Expected an identifier for the callee\'s name')
       if (AST.callee.name === 'Any') {
         assert(AST.arguments.length > 0, 'Parse', 'Expected at least one constraint for \'Any\'')
@@ -115,6 +117,25 @@ exports.getType = function (AST, aliases) {
         }
       } else {
         throw new Error(`Invalid constraint function call, ${AST.callee.name}`)
+      } */
+    case 'BinaryExpression':
+      const operator = AST.operator
+
+      if (operator === '|') {
+        const left = exports.getType(AST.left, aliases)
+        const right = exports.getType(AST.right, aliases)
+
+        if (left.constructor === PolymorphicType) {
+          return new PolymorphicType(...left.types, right)
+        } else if (right.constructor === PolymorphicType) {
+          return new PolymorphicType(left, ...right.types)
+        } else if (left.constructor === PolymorphicType && right.constructor === PolymorphicType) {
+          return new PolymorphicType(...left.types, ...right.types)
+        }
+
+        return new PolymorphicType(left, right)
+      } else {
+        assert(false, 'Parse', `Unexpected operator ${operator} in a constraint`)
       }
     default:
       throw new Error(`Invalid constraint type, ${type}!`)

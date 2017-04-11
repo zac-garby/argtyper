@@ -61,3 +61,7 @@ exports.typedef = function (fn) {
 
   aliases.push(alias)
 }
+
+let fn = exports.type((a=Number | String | Boolean) => {
+  console.log(a)
+})(5)
