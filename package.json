@@ -1,5 +1,7 @@
 {
   "name": "argtyper",
+  "license": "MIT",
+  "author": "Zac Garby <zacgarby@icloud.com>",
   "version": "2.3.2",
   "description": "JS type-checker - no compilation!",
   "main": "js/index.js",
@@ -10,8 +12,6 @@
     "type": "git",
     "url": "git+https://github.com/Zac-Garby/argtyper.git"
   },
-  "author": "Zac Garby",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Zac-Garby/argtyper/issues"
   },
