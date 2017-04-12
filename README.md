@@ -248,7 +248,7 @@ function sumOneHundred (a=[Number, Number, Number ... Number]) {
 
 (I omitted 96 `Number`s, but you can imagine how long it'd be if I wrote them all out)
 
-There's a better way to do this, of course. You can use the `|` operator:
+There's a better way to do this, of course. You can use the `*` operator:
 
 ```javascript
 function sumOneHundred (a=[Number * 100]) {
