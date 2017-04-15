@@ -179,45 +179,97 @@ describe('argtyper', function () {
     }).to.throw(Error)
   })
 
-  it('typeAll should work on an object only containing functions', () => {
-    const obj = {
-      add: function (x = Number, y = Number) {
-        return x + y
-      },
-      mul: function (x = Number, y = Number) {
-        return x * y
-      }
+  it('should allow return types in arrow functions', () => {
+    let addR = (a = Number | String, b = Number | String) => String => {
+      return a + b
     }
 
-    expect(function () {
-      typeAll(obj)
-    }).to.not.throw(Error)
+    addR = type(addR)
 
-    expect(obj.add(3, 5)).to.equal(8)
-    expect(obj.mul(2, 10)).to.equal(20)
+    expect(() => {
+      return addR(5, 'x')
+    }).to.not.throw(Error).and.to.equal('5x')
 
-    expect(function () {
-      obj.add('a', 1)
+    expect(() => {
+      return addR(3, 5)
     }).to.throw(Error)
   })
 
-  it('typeAll should work on a mix of functions and other values', () => {
-    const obj = {
-      add: function (x = Number, y = Number) {
-        return x + y
-      },
-      j: 10,
-      k: {}
+  it('should allow more complex return types using (_=...) syntax', () => {
+    let vec = (x = Any, y = Any) => (_ = {x: Number, y: Number}) => {
+      return { x: x, y: y }
     }
 
-    expect(function () {
-      typeAll(obj)
+    vec = type(vec)
+
+    expect(() => {
+      return vec(5, 3)
     }).to.not.throw(Error)
 
-    expect(obj.add(3, 5)).to.equal(8)
-
-    expect(function () {
-      obj.add('a', 1)
+    expect(() => {
+      return vec(5, 'x')
     }).to.throw(Error)
+  })
+
+  it('should allow aliases to be used as return types', () => {
+    typedef(Vector => ({x: Number, y: Number}))
+
+    let vec = (x = Any, y = Any) => Vector => {
+      return { x: x, y: y }
+    }
+
+    vec = type(vec)
+
+    expect(() => {
+      vec(3, 4)
+    }).to.not.throw(Error)
+
+    expect(() => {
+      vec(3, 'a')
+    }).to.throw(Error)
+  })
+
+  describe('typeAll', function () {
+    it('typeAll should work on an object only containing functions', () => {
+      const obj = {
+        add: function (x = Number, y = Number) {
+          return x + y
+        },
+        mul: function (x = Number, y = Number) {
+          return x * y
+        }
+      }
+
+      expect(function () {
+        typeAll(obj)
+      }).to.not.throw(Error)
+
+      expect(obj.add(3, 5)).to.equal(8)
+      expect(obj.mul(2, 10)).to.equal(20)
+
+      expect(function () {
+        obj.add('a', 1)
+      }).to.throw(Error)
+    })
+
+    it('typeAll should work on a mix of functions and other values', () => {
+      const obj = {
+        add: function (x = Number, y = Number) {
+          return x + y
+        },
+        j: 10,
+        k: {}
+      }
+
+      expect(function () {
+        typeAll(obj)
+      }).to.not.throw(Error)
+
+      expect(obj.add(3, 5)).to.equal(8)
+
+      expect(function () {
+        obj.add('a', 1)
+      }).to.throw(Error)
+    })
   })
 })
