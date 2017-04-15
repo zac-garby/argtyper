@@ -1,9 +1,9 @@
 # argtyper
 
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-![Downloads per month](https://img.shields.io/npm/dm/argtyper.svg)
-![Downloads total](https://img.shields.io/npm/dt/argtyper.svg)
-![Version](https://img.shields.io/npm/v/argtyper.svg)
+[![](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![](https://img.shields.io/npm/dm/argtyper.svg)](https://www.npmjs.com/package/argtyper)
+[![](https://img.shields.io/npm/dt/argtyper.svg)](https://www.npmjs.com/package/argtyper)
+[![](https://img.shields.io/npm/v/argtyper.svg)](https://www.npmjs.com/package/argtyper)
 
 ### JS Type-Constraints without compilation.
 
