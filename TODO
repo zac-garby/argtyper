@@ -2,3 +2,8 @@
  ∙ Functionality to type function arguments. Type for the arguments and arguments
    ∙ e.g. 'function (f=((x=Number, y=Number) => Number))', when typed, would take
      a function fitting the definition
+ ∙ Function return types:
+   ∙ e.g. '(x=Number | String, y=Number | String) => String => x + y',
+     when typed, would take two numbers or strings, add them, and return the
+     result - provided it's a string. This would mean that one argument must be
+     a string
