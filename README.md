@@ -14,6 +14,16 @@ Because of the way it works, it's only _possible_ at the moment to do it for arg
 sadly not variable declarations. But, that's not a huge problem because most of the bugs
 actually come from wrongly typed arguments.
 
+### Features
+
+ - **Argument types**
+ - **Function return types**
+ - **Type aliases** -- e.g. `Vector` &rarr; `{ x: Number, y: Number }`
+ - **Deep array and object typing** -- e.g. `[Number, [Number, [String, Number]]]`
+ - **Polymorphic types** -- e.g. `Number | String` &rarr; Either a number or a string
+ - **Repeated types** -- e.g. `[Number * 5]` &rarr; An array of five numbers
+ - **Arrays of any length** -- e.g. `[...Number]` &rarr; An array of any amount of numbers
+
 ## Installation
 
 If you're using npm, you can just run this command to install
