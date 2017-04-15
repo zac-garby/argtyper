@@ -2,7 +2,7 @@
   "name": "argtyper",
   "license": "MIT",
   "author": "Zac Garby <zacgarby@icloud.com>",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "JS type-checker - no compilation!",
   "main": "js/index.js",
   "scripts": {
