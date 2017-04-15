@@ -1,6 +1,9 @@
 # argtyper
 
-[![JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+![Version](https://img.shields.io/npm/v/argtyper.svg)
+![Downloads per month](https://img.shields.io/npm/dm/argtyper.svg)
+![Downloads total](https://img.shields.io/npm/dt/argtyper.svg)
 
 ### JS Type-Constraints without compilation.
 
