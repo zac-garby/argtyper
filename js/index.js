@@ -24,6 +24,20 @@ function checkArguments (types, args) {
 
 exports.type = function (fn) {
   const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
+  let returnType = null
+
+  if (exp.body.type === 'ArrowFunctionExpression' &&
+      exp.body.params.length === 1) {
+    let params = exp.body.params
+
+    if (params[0].type === 'AssignmentPattern') {
+      assert(params[0].left.name === '_', 'Parse', `Unexpected param name: '${params[0].left.name}'. Expected '_'`)
+      returnType = getType(params[0].right, aliases)
+    } else {
+      returnType = getType(params[0], aliases)
+    }
+  }
+
   const argsAST = exp.params
 
   const types = argsAST.map((arg) => {
@@ -35,7 +49,16 @@ exports.type = function (fn) {
   return function (...args) {
     checkArguments(types, args)
 
-    return fn(...args)
+    let result = fn(...args)
+
+    if (returnType) {
+      let applied = result()
+      returnType.check([wrapValue(applied)], [])
+
+      return applied
+    }
+
+    return result
   }
 }
 
