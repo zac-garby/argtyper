@@ -108,6 +108,75 @@ of an object.
 
 ### Syntax overview
 
+#### Function syntax
+
+The simplest sort of typing _argtyper_ supports is typing the arguments of a
+function, as demonstrated above:
+
+```javascript
+function fn (a=Number, b=String) {
+  ...
+}
+
+fn = type(fn) // Remember to call 'type'!
+```
+
+This function would only accept two arguments. The first would would have to
+be a number, and the second would have to be a string. If any of these requirements
+were not met, an error would be thrown.
+
+---
+
+You can also give a function a return type. This is only possible with arrow
+functions, due to the syntax of them:
+
+```javascript
+let add = (a=Number | String, b=Number | String) => String => {
+  return a + b
+}
+
+add = type(add)
+```
+
+Don't worry about the `Number | String` notation, it will be explained in the
+next section.
+
+This function takes two arguments, _a_ and _b_, both of them being either
+a number or a string. The function can, however, _only_ return a string -
+otherwise it will return an error
+
+---
+
+If you want to use a more complex constraint as the return type, there are two
+ways of doing so.
+
+Firstly, you could use `(_=Constraint)` notation:
+```javascript
+let fn = (...) => (_=Number | String) => {
+  ...
+}
+```
+
+This means you can use any of the constraints defined below, because without
+using this syntax, javascript's grammar won't allow your function.
+
+The second way is to define an alias for your complex type, turning it into a
+simple identifier:
+
+```javascript
+typedef(Vector => { x: Number, y: Number })
+```
+
+Then, you can just define your function like:
+
+```javascript
+let fn = (...) => Vector => {
+  ...
+}
+```
+
+#### Constraints
+
 There are many different types of constraints in _argtyper_. Here's a list!
 
  - `ClassName` - The simplest constraint, which you've already seen in the earlier
