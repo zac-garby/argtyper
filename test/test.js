@@ -196,7 +196,7 @@ describe('argtyper', function () {
   })
 
   it('should allow more complex return types using (_=...) syntax', () => {
-    let vec = (x = Any, y = Any) => (_={x: Number, y: Number}) => {
+    let vec = (x = Any, y = Any) => (_ = {x: Number, y: Number}) => {
       return { x: x, y: y }
     }
 
