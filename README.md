@@ -1,9 +1,6 @@
 # argtyper
 
-[![](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![](https://img.shields.io/npm/dm/argtyper.svg)](https://www.npmjs.com/package/argtyper)
-[![](https://img.shields.io/npm/dt/argtyper.svg)](https://www.npmjs.com/package/argtyper)
-[![](https://img.shields.io/npm/v/argtyper.svg)](https://www.npmjs.com/package/argtyper)
+This project is hosted on [GitHub](https://github.com/Zac-Garby/argtyper)
 
 ### JS Type-Constraints without compilation.
 
@@ -372,3 +369,8 @@ function sumN (xs=[] | [...Number]) {
 
 Which works because it can either match an empty array or an array with some
 numbers in it.
+
+## Problems
+
+Well, "Problem". Basically, argtyper can be quite slow, so it's probably best not
+to use it for applications which need to be very performant.
