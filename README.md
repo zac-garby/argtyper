@@ -1,7 +1,5 @@
 # argtyper
 
-This project is hosted on [GitHub](https://github.com/Zac-Garby/argtyper)
-
 ### JS Type-Constraints without compilation.
 
 Type checking is very useful in JavaScript - it helps catch a number of different bugs.
