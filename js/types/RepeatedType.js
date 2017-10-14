@@ -18,7 +18,7 @@ exports.RepeatedType = class RepeatedType {
     assert(arg.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${arg.name}`, stacktrace)
       .and(arg.elements.length > 0, 'Type', 'Expected at least one element in the array', stacktrace)
 
-    for (let i = 0; i < arg.elements.length; i++) {
+    for (var i = 0, len = arg.elements.length; i < len; i++) {
       let elem = arg.elements[i]
       try {
         this.type.check(elem)
