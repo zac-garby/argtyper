@@ -12,20 +12,17 @@ exports.ArrayType = class ArrayType {
     }, '[') + ']'
   }
 
-  check (args, stacktrace) {
-    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`, stacktrace)
+  check (arg, stacktrace) {
+    assert(!!arg, 'Type', `Expected at least one more value to match ${this}`, stacktrace)
 
-    const that = args[0]
+    assert(arg.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${arg.name}`, stacktrace)
 
-    assert(that.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${that.name}`, stacktrace)
-
-    let elems = that.elements
+    let elems = arg.elements
     let types = this.elements
     assert(types.length >= elems.length, 'Type', `${elems.length - types.length} too many value(s)`, stacktrace)
 
     for (let t = 0; t < types.length; t++) {
-      const type = types[t]
-      type.check([elems[t]], [...stacktrace, `element ${t + 1}`])
+      types[t].check(elems[t], [...stacktrace, `element ${t + 1}`])
     }
   }
 }

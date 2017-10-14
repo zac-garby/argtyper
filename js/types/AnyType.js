@@ -7,6 +7,6 @@ exports.AnyType = class AnyType {
     return 'Any'
   }
 
-  check (args, stacktrace) {
+  check (arg, stacktrace) {
   }
 }

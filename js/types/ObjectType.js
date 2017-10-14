@@ -10,24 +10,22 @@ exports.ObjectType = class ObjectType {
     return JSON.stringify(this.model)
   }
 
-  check (args, stacktrace) {
-    assert(args.length > 0, 'Type', `Expected at least one more value to match ${this}`, stacktrace)
+  check (arg, stacktrace) {
+    assert(!!arg, 'Type', `Expected at least one more value to match ${this}`, stacktrace)
 
-    const that = args[0]
-
-    assert(that.constructor === ObjectType, 'Type', `Wrong type. Expected an object, but found ${that.name}`, stacktrace)
+    assert(arg.constructor === ObjectType, 'Type', `Wrong type. Expected an object, but found ${arg.name}`, stacktrace)
 
     const thisLength = Object.keys(this.model).length
-    const thatLength = Object.keys(that.model).length
+    const argLength = Object.keys(arg.model).length
 
-    assert(thisLength === thatLength, 'Type', `Expected ${thisLength} properties, but found ${thatLength}`, stacktrace)
+    assert(thisLength === argLength, 'Type', `Expected ${thisLength} properties, but found ${argLength}`, stacktrace)
 
     for (var prop in this.model) {
       if (this.model.hasOwnProperty(prop)) {
-        assert(that.model.hasOwnProperty(prop), 'Type', `Expected property ${prop} to be defined`,
+        assert(arg.model.hasOwnProperty(prop), 'Type', `Expected property ${prop} to be defined`,
           [...stacktrace, `property ${prop}`])
 
-        this.model[prop].check([that.model[prop]], stacktrace)
+        this.model[prop].check(arg.model[prop], stacktrace)
       }
     }
   }
