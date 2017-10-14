@@ -18,7 +18,7 @@ exports.wrapType = function (constructor) {
   if (constructor.constructor === Array) {
     return new ArrayType(...constructor.map(exports.wrapType))
   } else if (constructor.constructor === Object) {
-    let obj = {}
+    var obj = {}
 
     for (var prop in constructor) {
       if (constructor.hasOwnProperty(prop)) {
@@ -43,7 +43,7 @@ exports.wrapValue = function (val) {
   if (constructor === Array) {
     return new ArrayType(...val.map(exports.wrapValue))
   } else if (constructor === Object) {
-    let obj = {}
+    var obj = {}
 
     for (var prop in val) {
       if (val.hasOwnProperty(prop)) {
@@ -65,7 +65,7 @@ exports.getType = function (AST, aliases) {
 
   switch (type) {
     case 'Identifier':
-      for (let alias of aliases) {
+      for (var alias of aliases) {
         if (alias.name === AST.name) {
           return exports.getType(alias.AST, aliases)
         }
@@ -91,7 +91,7 @@ exports.getType = function (AST, aliases) {
           const amount = right.value
           const arr = []
 
-          for (let i = 0; i < amount; i++) {
+          for (var i = 0; i < amount; i++) {
             arr.push(constraint)
           }
 

@@ -12,13 +12,15 @@ const getType = require('./helpers').getType
 const aliases = []
 
 function checkArguments (types, argumentsObject) {
-  let args = []
-  for (let i = 0; i < argumentsObject.length; i++) {
+  var args = []
+  var i
+
+  for (i = 0; i < argumentsObject.length; i++) {
     args[i] = wrapValue(argumentsObject[i])
   }
 
-  for (let t = 0; t < types.length; t++) {
-    args = types[t].check(args, [`argument ${t + 1}`])
+  for (i = 0; i < types.length; i++) {
+    args = types[i].check(args, [`argument ${i + 1}`])
   }
 
   assert(args.length === 0, 'Type', `${args.length} too many arguments!`)
