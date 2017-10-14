@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Zac-Garby/argtyper#readme",
   "devDependencies": {
     "chai": "*",
+    "mocha": "^4.0.1",
     "standard": "^10.0.1"
   },
   "dependencies": {
