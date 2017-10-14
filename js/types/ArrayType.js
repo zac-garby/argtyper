@@ -17,8 +17,8 @@ exports.ArrayType = class ArrayType {
 
     assert(arg.constructor === ArrayType, 'Type', `Wrong type. Expected an array, but found ${arg.name}`, stacktrace)
 
-    let elems = arg.elements
-    let types = this.elements
+    const elems = arg.elements
+    const types = this.elements
     assert(types.length >= elems.length, 'Type', `${elems.length - types.length} too many value(s)`, stacktrace)
 
     for (var i = 0, len = types.length; i < len; i++) {

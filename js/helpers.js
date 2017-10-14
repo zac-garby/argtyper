@@ -102,13 +102,13 @@ exports.getType = function (AST, aliases) {
         }
       }
 
-      let arr = elems.map((elem) => exports.getType(elem, aliases))
+      const arr = elems.map((elem) => exports.getType(elem, aliases))
 
       return new ArrayType(...arr)
     case 'ObjectExpression':
-      let obj = {}
+      const obj = {}
 
-      for (let prop of AST.properties) {
+      for (var prop of AST.properties) {
         assert(prop.key.type === 'Identifier', 'Parse', 'Expected an identifier for every key')
 
         obj[prop.key.name] = exports.getType(prop.value, aliases)

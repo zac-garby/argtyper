@@ -19,7 +19,7 @@ exports.RepeatedType = class RepeatedType {
       .and(arg.elements.length > 0, 'Type', 'Expected at least one element in the array', stacktrace)
 
     for (var i = 0, len = arg.elements.length; i < len; i++) {
-      let elem = arg.elements[i]
+      const elem = arg.elements[i]
       try {
         this.type.check(elem)
       } catch (e) {
