@@ -30,7 +30,5 @@ exports.ObjectType = class ObjectType {
         this.model[prop].check([that.model[prop]], stacktrace)
       }
     }
-
-    return args.slice(1)
   }
 }

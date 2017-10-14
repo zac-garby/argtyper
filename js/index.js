@@ -15,15 +15,12 @@ function checkArguments (types, argumentsObject) {
   var args = []
   var i
 
-  for (i = 0; i < argumentsObject.length; i++) {
-    args[i] = wrapValue(argumentsObject[i])
-  }
+  assert(types.length >= argumentsObject.length, 'Type', `${argumentsObject.length - types.length} too many arguments!`)
 
   for (i = 0; i < types.length; i++) {
-    args = types[i].check(args, [`argument ${i + 1}`])
+    args[i] = wrapValue(argumentsObject[i])
+    types[i].check([args[i]], [`argument ${i + 1}`])
   }
-
-  assert(args.length === 0, 'Type', `${args.length} too many arguments!`)
 }
 
 exports.type = function (fn) {

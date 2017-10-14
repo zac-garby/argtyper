@@ -27,7 +27,5 @@ exports.PolymorphicType = class PolymorphicType {
     })
 
     assert(match, 'Type', `Wrong type. Expected ${this} but found ${that}`, stacktrace)
-
-    return args.slice(1)
   }
 }

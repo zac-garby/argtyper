@@ -8,6 +8,5 @@ exports.AnyType = class AnyType {
   }
 
   check (args, stacktrace) {
-    return args.slice(1)
   }
 }

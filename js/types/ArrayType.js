@@ -21,14 +21,11 @@ exports.ArrayType = class ArrayType {
 
     let elems = that.elements
     let types = this.elements
+    assert(types.length >= elems.length, 'Type', `${elems.length - types.length} too many value(s)`, stacktrace)
 
     for (let t = 0; t < types.length; t++) {
       const type = types[t]
-      elems = type.check(elems, [...stacktrace, `element ${t + 1}`])
+      type.check([elems[t]], [...stacktrace, `element ${t + 1}`])
     }
-
-    assert(elems.length === 0, 'Type', `${elems.length} too many value(s)`, stacktrace)
-
-    return args.slice(1)
   }
 }

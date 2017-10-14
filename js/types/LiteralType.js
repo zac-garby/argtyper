@@ -17,7 +17,5 @@ exports.LiteralType = class LiteralType {
 
     assert(that.constructor === LiteralType, 'Type', `Wrong type. Expected a basic type, but found ${that.name}`, stacktrace)
       .and(that.type === this.type, 'Type', `Wrong type. Expected ${this} but found ${that}`, stacktrace)
-
-    return args.slice(1)
   }
 }

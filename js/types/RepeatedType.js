@@ -29,7 +29,5 @@ exports.RepeatedType = class RepeatedType {
           [...stacktrace, `element ${i + 1}`])
       }
     }
-
-    return args.slice(1)
   }
 }
