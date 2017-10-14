@@ -1,6 +1,6 @@
 exports.error = function (type, text, stacktrace = null) {
   if (stacktrace) {
-    let str = `(${type}) ${text}`
+    var str = `(${type}) ${text}`
     for (const item of stacktrace.reverse()) {
       str += `\n    of ${item}`
     }

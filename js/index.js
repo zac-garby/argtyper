@@ -12,25 +12,20 @@ const getType = require('./helpers').getType
 const aliases = []
 
 function checkArguments (types, argumentsObject) {
-  let args = []
-  for (let i = 0; i < argumentsObject.length; i++) {
-    args[i] = wrapValue(argumentsObject[i])
-  }
+  assert(types.length >= argumentsObject.length, 'Type', `${argumentsObject.length - types.length} too many arguments!`)
 
-  for (let t = 0; t < types.length; t++) {
-    args = types[t].check(args, [`argument ${t + 1}`])
+  for (var i = 0, len = types.length; i < len; i++) {
+    types[i].check(wrapValue(argumentsObject[i]), [`argument ${i + 1}`])
   }
-
-  assert(args.length === 0, 'Type', `${args.length} too many arguments!`)
 }
 
 exports.type = function (fn) {
   const exp = esprima.parse(`(${fn.toString()})`).body[0].expression
-  let returnType = null
+  var returnType = null
 
   if (exp.body.type === 'ArrowFunctionExpression' &&
       exp.body.params.length === 1) {
-    let params = exp.body.params
+    const params = exp.body.params
 
     if (params[0].type === 'AssignmentPattern') {
       assert(params[0].left.name === '_', 'Parse', `Unexpected param name: '${params[0].left.name}'. Expected '_'`)
@@ -54,8 +49,8 @@ exports.type = function (fn) {
     const result = fn.apply(undefined, arguments)
 
     if (returnType) {
-      let applied = result()
-      returnType.check([wrapValue(applied)], [])
+      const applied = result()
+      returnType.check(wrapValue(applied), [])
 
       return applied
     }

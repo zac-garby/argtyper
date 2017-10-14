@@ -7,7 +7,6 @@ exports.AnyType = class AnyType {
     return 'Any'
   }
 
-  check (args, stacktrace) {
-    return args.slice(1)
+  check (arg, stacktrace) {
   }
 }
